@@ -37,9 +37,9 @@ import com.properlty.util.FileUtils;
  * @author Francesco Cina
  *
  */
-public class PropertiesResourceFileReader implements Reader {
+public class PropertiesResourceReader implements Reader {
 
-	private final Logger logger = LoggerFactory.getLogger(PropertiesResourceFileReader.class);
+	private final Logger logger = LoggerFactory.getLogger(PropertiesResourceReader.class);
 	private final String resourcePath;
 	private boolean ignoreNotFound = false;
 	private Charset charset = StandardCharsets.UTF_8;
@@ -55,11 +55,11 @@ public class PropertiesResourceFileReader implements Reader {
 	 *
 	 * @param path the path on the filesystem of the properties file
 	 */
-	public static PropertiesResourceFileReader build(String resourcePath) {
-		return new PropertiesResourceFileReader(resourcePath);
+	public static PropertiesResourceReader build(String resourcePath) {
+		return new PropertiesResourceReader(resourcePath);
 	}
 
-	private PropertiesResourceFileReader(String resourcePath) {
+	private PropertiesResourceReader(String resourcePath) {
 		this.resourcePath = resourcePath;
 	}
 
@@ -103,7 +103,7 @@ public class PropertiesResourceFileReader implements Reader {
 	 *
 	 * @param ignoreNotFound
 	 */
-	public PropertiesResourceFileReader ignoreNotFound(boolean ignoreNotFound) {
+	public PropertiesResourceReader ignoreNotFound(boolean ignoreNotFound) {
 		this.ignoreNotFound = ignoreNotFound;
 		return this;
 	}
@@ -121,7 +121,7 @@ public class PropertiesResourceFileReader implements Reader {
 	 *
 	 * @param charset
 	 */
-	public PropertiesResourceFileReader charset(Charset charset) {
+	public PropertiesResourceReader charset(Charset charset) {
 		this.charset = charset;
 		return this;
 	}

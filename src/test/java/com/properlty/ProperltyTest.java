@@ -265,4 +265,56 @@ public class ProperltyTest extends ProperltyBaseTest {
 		prop.getLong("key.one");
 
 	}
+
+	@Test
+	public void shouldReturnEmptyOptionalEnum() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "value.one");
+		properties.put("key.two", "value.two");
+
+		final Properlty prop = new Properlty(properties);
+
+		assertFalse(prop.getEnum("key.three", NeedSomebodyToLove.class).isPresent());
+	}
+
+
+	@Test
+	public void shouldReturnOptionalEnum() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "ME");
+		properties.put("key.two", "THEM");
+
+		final Properlty prop = new Properlty(properties);
+
+		assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove.class).get());
+		assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove.class).get());
+	}
+
+	@Test
+	public void shouldReturnDefaultEnum() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "ME");
+
+		final Properlty prop = new Properlty(properties);
+
+		assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove.THEM));
+		assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove.THEM));
+
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldThrowExceptionParsingWrongEnumLong() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "not an enum");
+
+		final Properlty prop = new Properlty(properties);
+
+		prop.getEnum("key.one", NeedSomebodyToLove.class);
+
+	}
+
 }

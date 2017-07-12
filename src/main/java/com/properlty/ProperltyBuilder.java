@@ -16,7 +16,7 @@
 package com.properlty;
 
 import com.properlty.reader.EnvironmentVariablesReader;
-import com.properlty.reader.PropertiesResourceFileReader;
+import com.properlty.reader.PropertiesResourceReader;
 import com.properlty.reader.Reader;
 import com.properlty.reader.SystemPropertiesReader;
 import com.properlty.reader.decorator.PriorityQueueDecoratorReader;
@@ -40,45 +40,111 @@ public class ProperltyBuilder {
 		reader.add(new SystemPropertiesReader(), systemPropertiesPriority);
 	}
 
+	/**
+	 * Return the default priority of readers added without explicitly
+	 * declaring the priority.
+	 * Default value is {@value Properlty#DEFAULT_PRIORITY}
+	 * @return the default priority
+	 */
 	public int getDefaultPriority() {
 		return defaultPriority;
 	}
 
+	/**
+	 * Set the defaultPriority of Readers added without explicitly
+	 * priority declaration.
+	 *
+	 * @param defaultPriority positive integer value; the higher the value the lower the priority. 0 is the highest priority.
+	 * @return
+	 */
 	public ProperltyBuilder defaultPriority(int defaultPriority) {
 		this.defaultPriority = defaultPriority;
 		return this;
 	}
 
+	/**
+	 * Add a new property {@link Reader} with the default priority.
+	 * If two or more {@link Reader}s have the same priority, the last added has the highest priority among them.
+	 *
+	 * @param reader
+	 * @return
+	 */
 	public ProperltyBuilder add(Reader reader) {
 		return add(reader, defaultPriority);
 	}
 
+	/**
+	 * Add a new property {@link Reader}.
+	 * If two or more {@link Reader}s have the same priority, the last added has the highest priority among them.
+	 *
+	 * @param reader
+	 * @return
+	 */
 	public ProperltyBuilder add(Reader reader, int priority) {
 		this.reader.add(reader, priority);
 		return this;
 	}
 
+	/**
+	 * Add a new {@link PropertiesResourceReader} to fetch the properties from the a specific resource on the file system
+	 * or on the classpath.
+	 * The resourcePath can be in the form:
+	 *
+	 * - ./path/file : path of a file in the file system
+	 * - file:./path/file : same as previous case, a path of a file in the file system
+	 * - classpath:/path/file : path of a resource in the classpath
+	 *
+	 * If two or more {@link Reader}s have the same priority, the last added has the highest priority among them.
+	 *
+	 * @param reader
+	 * @return
+	 */
 	public ProperltyBuilder add(String resourcePath) {
 		return add(resourcePath, defaultPriority);
 	}
 
+	/**
+	 * Add a new {@link PropertiesResourceReader} to fetch the properties from the a specific resource on the file system
+	 * or on the classpath.
+	 * The resourcePath can be in the form:
+	 *
+	 * - ./path/file : path of a file in the file system
+	 * - file:./path/file : same as previous case, a path of a file in the file system
+	 * - classpath:/path/file : path of a resource in the classpath
+	 *
+	 * If two or more {@link Reader}s have the same priority, the last added has the highest priority among them.
+	 *
+	 * @param resourcePath
+	 * @param priority
+	 * @return
+	 */
 	public ProperltyBuilder add(String resourcePath, int priority) {
-		return add(PropertiesResourceFileReader.build(resourcePath), priority);
+		return add(PropertiesResourceReader.build(resourcePath), priority);
 	}
 
+	/**
+	 * build a {@link Properlty} instance that contains the evaluated properties.
+	 * @return
+	 */
 	public Properlty build() {
 		return new Properlty( new ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, ignoreUnresolvablePlaceholders).read() );
 	}
 
 	/**
-	 * @return the endDelimiter
+	 * Return the end delimiter of the placeholders.
+	 * Default value is {@value Properlty#DEFAULT_END_DELIMITER}
+	 *
+	 * @return the end delimiter
 	 */
 	public String getEndDelimiter() {
 		return endDelimiter;
 	}
 
 	/**
-	 * @return the startDelimiter
+	 * Return the start delimiter of the placeholders.
+	 * Default value is {@value Properlty#DEFAULT_START_DELIMITER}
+	 *
+	 * @return the start delimiter
 	 */
 	public String getStartDelimiter() {
 		return startDelimiter;

@@ -39,18 +39,43 @@ public class Properlty {
 		this.properties = properties;
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<String> get(String key) {
 		return Optional.ofNullable(properties.get(key));
 	}
 
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 *
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public String get(String key, String defaultValue) {
 		return get(key).orElse(defaultValue);
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<Integer> getInt(String key) {
 		return Optional.ofNullable(properties.get(key)).map(Integer::parseInt);
 	}
 
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public int getInt(String key, int defaultValue) {
 		final Optional<Integer> optional = getInt(key);
 		if (optional.isPresent()) {
@@ -59,10 +84,22 @@ public class Properlty {
 		return defaultValue;
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<Double> getDouble(String key) {
 		return Optional.ofNullable(properties.get(key)).map(Double::parseDouble);
 	}
 
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public double getDouble(String key, double defaultValue) {
 		final Optional<Double> optional = getDouble(key);
 		if (optional.isPresent()) {
@@ -71,10 +108,22 @@ public class Properlty {
 		return defaultValue;
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<Float> getFloat(String key) {
 		return Optional.ofNullable(properties.get(key)).map(Float::parseFloat);
 	}
 
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public float getFloat(String key, float defaultValue) {
 		final Optional<Float> optional = getFloat(key);
 		if (optional.isPresent()) {
@@ -83,10 +132,22 @@ public class Properlty {
 		return defaultValue;
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<Long> getLong(String key) {
 		return Optional.ofNullable(properties.get(key)).map(Long::parseLong);
 	}
 
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	public long getLong(String key, long defaultValue) {
 		final Optional<Long> optional = getLong(key);
 		if (optional.isPresent()) {
@@ -95,5 +156,28 @@ public class Properlty {
 		return defaultValue;
 	}
 
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
+	public <T extends Enum<T>> Optional<T> getEnum(String key, Class<T> type) {
+		return Optional.ofNullable(properties.get(key)).map(value -> Enum.valueOf(type, value));
+	}
+
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public <T extends Enum<T>> T getEnum(String key, T defaultValue) {
+		final Optional<T> optional = getEnum(key, defaultValue.getClass());
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return defaultValue;
+	}
 
 }

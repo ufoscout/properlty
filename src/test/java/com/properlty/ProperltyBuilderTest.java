@@ -32,7 +32,7 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 import com.properlty.exception.UnresolvablePlaceholdersException;
 import com.properlty.reader.DoNothingReader;
-import com.properlty.reader.PropertiesResourceFileReader;
+import com.properlty.reader.PropertiesResourceReader;
 
 public class ProperltyBuilderTest extends ProperltyBaseTest {
 
@@ -120,7 +120,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key, key);
 
 			final Properlty prop = Properlty.builder()
-					.add(PropertiesResourceFileReader.build("NOT VALID PATH").ignoreNotFound(true).charset(StandardCharsets.UTF_8))
+					.add(PropertiesResourceReader.build("NOT VALID PATH").ignoreNotFound(true).charset(StandardCharsets.UTF_8))
 					.build();
 			assertNotNull(prop);
 

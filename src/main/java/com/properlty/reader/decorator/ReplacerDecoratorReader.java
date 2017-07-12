@@ -64,8 +64,10 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 
 				final List<String> tokens = StringUtils.allTokens(value, startDelimiter, endDelimiter, true);
 
-				valuesToBeReplaced = valuesToBeReplaced || !tokens.isEmpty();
-				valuesToBeReplacedMap.put(key, value);
+				if (!tokens.isEmpty()) {
+					valuesToBeReplaced = true;
+					valuesToBeReplacedMap.put(key, value);
+				}
 
 				for (final String token : tokens) {
 					if (output.containsKey(token)) {

@@ -173,7 +173,7 @@ public class Properlty {
 	 * @return
 	 */
 	public <T extends Enum<T>> T getEnum(String key, T defaultValue) {
-		final Optional<T> optional = getEnum(key, defaultValue.getClass());
+		final Optional<T> optional = getEnum(key, (Class<T>) defaultValue.getClass());
 		if (optional.isPresent()) {
 			return optional.get();
 		}

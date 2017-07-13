@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -318,6 +319,67 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		prop.getEnum("key.one", NeedSomebodyToLove.class);
 
+	}
+
+	@Test
+	public void shouldReturntheKeyApplyingTheMapFunction() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "111");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertEquals(111, prop.get("key.one", Integer::valueOf).get().intValue());
+		assertEquals(222, prop.get("key.two", 222, Integer::valueOf).intValue());
+		assertFalse(prop.get("key.three", Integer::valueOf).isPresent());
+	}
+
+	@Test
+	public void shouldReturnValueToArray() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "111,AAAAA,BBB");
+
+		final Properlty prop = buildProperlty(properties);
+
+		final String[] values = prop.getArray("key.one");
+		assertEquals(3, values.length);
+		assertEquals("111", values[0]);
+		assertEquals("AAAAA", values[1]);
+		assertEquals("BBB", values[2]);
+		assertEquals(0, prop.getArray("key.three").length);
+	}
+
+	@Test
+	public void shouldReturnValueToList() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "111,AAAAA,BBB");
+
+		final Properlty prop = buildProperlty(properties);
+
+		final List<String> values = prop.getList("key.one");
+		assertEquals(3, values.size());
+		assertEquals("111", values.get(0));
+		assertEquals("AAAAA", values.get(1));
+		assertEquals("BBB", values.get(2));
+		assertEquals(0, prop.getList("key.three").size());
+	}
+
+	@Test
+	public void shouldReturnValueToListOfCustomObjects() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "111,222,333");
+
+		final Properlty prop = buildProperlty(properties);
+
+		final List<Integer> values = prop.getList("key.one", Integer::valueOf);
+		assertEquals(3, values.size());
+		assertEquals(111, values.get(0).intValue());
+		assertEquals(222, values.get(1).intValue());
+		assertEquals(333, values.get(2).intValue());
+		assertEquals(0, prop.getList("key.three", Integer::valueOf).size());
 	}
 
 	private Properlty buildProperlty(Map<String, String> properties) {

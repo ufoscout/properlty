@@ -15,8 +15,12 @@
  ******************************************************************************/
 package com.properlty;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.properlty.reader.PropertyValue;
 
@@ -30,6 +34,7 @@ public class Properlty {
 
 	public static final String DEFAULT_START_DELIMITER = "${";
 	public static final String DEFAULT_END_DELIMITER = "}";
+	public static final String DEFAULT_LIST_SEPARATOR = ",";
 
 	private final Map<String, PropertyValue> properties;
 
@@ -64,6 +69,30 @@ public class Properlty {
 	 */
 	public String get(String key, String defaultValue) {
 		return get(key).orElse(defaultValue);
+	}
+
+	/**
+	 * Return the property value associated with the given key and apply the map function to it.
+	 *
+	 * @param key
+	 * @param map
+	 * @return
+	 */
+	public <T> Optional<T> get(String key, Function<String, T> map) {
+		return get(key).map(map);
+	}
+
+	/**
+	 * Return the property value associated with the given key and apply the map function to it.
+	 * The defaultValue if the key cannot be resolved.
+	 *
+	 * @param key
+	 * @param defaultValue
+	 * @param map
+	 * @return
+	 */
+	public <T> T get(String key, T defaultValue, Function<String, T> map) {
+		return get(key).map(map).orElse(defaultValue);
 	}
 
 	/**
@@ -186,4 +215,71 @@ public class Properlty {
 		return defaultValue;
 	}
 
+	/**
+	 * Return the property value associated with the given key split with the default separator.
+	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 *
+	 * @param key
+	 * @return
+	 */
+	public String[] getArray(String key) {
+		return getArray(key, DEFAULT_LIST_SEPARATOR);
+	}
+
+	/**
+	 * Return the property value associated with the given key split with the specific separator.
+	 *
+	 * @param key
+	 * @param separator
+	 * @return
+	 */
+	public String[] getArray(String key, String separator) {
+		return get(key).map(value -> value.split(separator)).orElse(new String[0]);
+	}
+
+	/**
+	 * Return the property value associated with the given key split with the default separator.
+	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 *
+	 * @param key
+	 * @return
+	 */
+	public List<String> getList(String key) {
+		return Arrays.asList(getArray(key));
+	}
+
+	/**
+	 * Return the property value associated with the given key split with the specific separator.
+	 *
+	 * @param key
+	 * @param separator
+	 * @return
+	 */
+	public List<String> getList(String key, String separator) {
+		return Arrays.asList(getArray(key, separator));
+	}
+
+	/**
+	 * Return the property value associated with the given key split with the default separator
+	 * and apply the map function to elements in the resulting list.
+	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 *
+	 * @param key
+	 * @return
+	 */
+	public <T> List<T> getList(String key, Function<String, T> map) {
+		return getList(key, DEFAULT_LIST_SEPARATOR, map);
+	}
+
+	/**
+	 * Return the property value associated with the given key split with the specific separator
+	 * and apply the map function to elements in the resulting list.
+	 *
+	 * @param key
+	 * @param separator
+	 * @return
+	 */
+	public <T> List<T> getList(String key, String separator, Function<String, T> map) {
+		return getList(key, separator).stream().map(map).collect(Collectors.toList());
+	}
 }

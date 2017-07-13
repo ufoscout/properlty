@@ -53,7 +53,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			assertEquals(value, prop.get(key).get());
 
 			final String normalizedKey = key.toLowerCase().replace("_", ".");
-			assertEquals(value, prop.get(normalizedKey).get());
+			assertTrue(prop.get(normalizedKey).isPresent());
 		}
 
 	}

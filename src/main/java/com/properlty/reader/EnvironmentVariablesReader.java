@@ -16,6 +16,7 @@
 package com.properlty.reader;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Return a {@link Map} with all values from OS environment variables.
@@ -26,8 +27,12 @@ import java.util.Map;
 public class EnvironmentVariablesReader implements Reader {
 
 	@Override
-	public Map<String, String> read() {
-		return System.getenv();
+	public Map<String, PropertyValue> read() {
+		return System.getenv().entrySet().stream()
+		        .collect(Collectors.toMap(
+		                e -> e.getKey(),
+		                e -> PropertyValue.of(e.getValue()).resolvable(false)
+		            ));
 	}
 
 }

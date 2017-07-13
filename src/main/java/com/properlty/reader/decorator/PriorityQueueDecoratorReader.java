@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.properlty.reader.PropertyValue;
 import com.properlty.reader.Reader;
 
 /**
@@ -38,12 +39,12 @@ public class PriorityQueueDecoratorReader implements Reader {
 	private final Map<Integer, List<Reader>> readersMap = new TreeMap<>(Collections.reverseOrder());
 
 	@Override
-	public Map<String, String> read() {
-		final Map<String, String> result =  new HashMap<>();
+	public Map<String, PropertyValue> read() {
+		final Map<String, PropertyValue> result =  new HashMap<>();
 
 		readersMap.forEach((priority, readers) -> {
 			readers.forEach(reader -> {
-				final Map<String, String> entries = reader.read();
+				final Map<String, PropertyValue> entries = reader.read();
 				result.putAll(entries);
 			});
 		}) ;

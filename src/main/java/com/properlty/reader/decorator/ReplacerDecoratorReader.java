@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.properlty.exception.UnresolvablePlaceholdersException;
+import com.properlty.reader.PropertyValue;
 import com.properlty.reader.Reader;
 import com.properlty.util.StringUtils;
 
@@ -46,10 +47,10 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 	}
 
 	@Override
-	protected Map<String, String> apply(Map<String, String> input) {
-		final Map<String, String> output = new LinkedHashMap<>(input);
+	protected Map<String, PropertyValue> apply(Map<String, PropertyValue> input) {
+		final Map<String, PropertyValue> output = new LinkedHashMap<>(input);
 
-		final Map<String, String> valuesToBeReplacedMap = new LinkedHashMap<>(input);
+		final Map<String, PropertyValue> valuesToBeReplacedMap = new LinkedHashMap<>(input);
 		boolean valuesToBeReplaced = true;
 		boolean valuesReplacedOnLastLoop = true;
 
@@ -58,11 +59,13 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 			valuesToBeReplacedMap.clear();
 			valuesReplacedOnLastLoop = false;
 
-			for (final Entry<String, String> entry : output.entrySet()) {
+			for (final Entry<String, PropertyValue> entry : output.entrySet()) {
 				final String key = entry.getKey();
-				final String value = entry.getValue();
+				final PropertyValue value = entry.getValue();
 
-				final List<String> tokens = StringUtils.allTokens(value, startDelimiter, endDelimiter, true);
+				if (value.isResolvable()) {
+
+				final List<String> tokens = StringUtils.allTokens(value.getValue(), startDelimiter, endDelimiter, true);
 
 				if (!tokens.isEmpty()) {
 					valuesToBeReplaced = true;
@@ -71,14 +74,15 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 
 				for (final String token : tokens) {
 					if (output.containsKey(token)) {
-						final String tokenValue = output.get(token);
-						if (!StringUtils.hasTokens(tokenValue, startDelimiter, endDelimiter)) {
-							final String replacedValue = value.replace(startDelimiter + token + endDelimiter, tokenValue);
+						final PropertyValue tokenValue = output.get(token);
+						if (!StringUtils.hasTokens(tokenValue.getValue(), startDelimiter, endDelimiter)) {
+							value.value( value.getValue().replace(startDelimiter + token + endDelimiter, tokenValue.getValue()) );
 							valuesReplacedOnLastLoop = true;
-							output.put(key, replacedValue);
 						}
 					}
 				};
+
+			}
 			};
 		}
 
@@ -89,7 +93,7 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 				message.append("key: [");
 				message.append(key);
 				message.append("] value: [");
-				message.append(value);
+				message.append(value.getValue());
 				message.append("]\n");
 			});
 

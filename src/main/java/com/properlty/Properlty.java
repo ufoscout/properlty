@@ -18,6 +18,8 @@ package com.properlty;
 import java.util.Map;
 import java.util.Optional;
 
+import com.properlty.reader.PropertyValue;
+
 public class Properlty {
 
 	public static final int HIGHEST_PRIORITY = 0;
@@ -29,13 +31,13 @@ public class Properlty {
 	public static final String DEFAULT_START_DELIMITER = "${";
 	public static final String DEFAULT_END_DELIMITER = "}";
 
-	private final Map<String, String> properties;
+	private final Map<String, PropertyValue> properties;
 
 	public static ProperltyBuilder builder() {
 		return new ProperltyBuilder();
 	}
 
-	Properlty(Map<String, String> properties) {
+	Properlty(Map<String, PropertyValue> properties) {
 		this.properties = properties;
 	}
 
@@ -46,7 +48,11 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<String> get(String key) {
-		return Optional.ofNullable(properties.get(key));
+		final PropertyValue value = properties.get(key);
+		if (value != null) {
+			return Optional.ofNullable(value.getValue());
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -67,7 +73,7 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<Integer> getInt(String key) {
-		return Optional.ofNullable(properties.get(key)).map(Integer::parseInt);
+		return get(key).map(Integer::parseInt);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<Double> getDouble(String key) {
-		return Optional.ofNullable(properties.get(key)).map(Double::parseDouble);
+		return get(key).map(Double::parseDouble);
 	}
 
 	/**
@@ -115,7 +121,7 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<Float> getFloat(String key) {
-		return Optional.ofNullable(properties.get(key)).map(Float::parseFloat);
+		return get(key).map(Float::parseFloat);
 	}
 
 	/**
@@ -139,7 +145,7 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<Long> getLong(String key) {
-		return Optional.ofNullable(properties.get(key)).map(Long::parseLong);
+		return get(key).map(Long::parseLong);
 	}
 
 	/**
@@ -163,7 +169,7 @@ public class Properlty {
 	 * @return
 	 */
 	public <T extends Enum<T>> Optional<T> getEnum(String key, Class<T> type) {
-		return Optional.ofNullable(properties.get(key)).map(value -> Enum.valueOf(type, value));
+		return get(key).map(value -> Enum.valueOf(type, value));
 	}
 
 	/**

@@ -47,6 +47,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		for (final Entry<String, String> envEntry : envVar.entrySet()) {
 
 			final String key = envEntry.getKey();
+			getLogger().info("Checking key [{}]", key);
+
 			final String value = envEntry.getValue();
 			assertEquals(value, prop.get(key).get());
 
@@ -59,9 +61,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	@Test
 	public void systemPropertiesShouldHaveHigherPriorityThanEnvVariables() {
 		final Map<String, String> envVar = System.getenv();
-		assertTrue(envVar.size() >= 2);
 
-		final String[] envVarKeys = envVar.keySet().toArray(new String[0]);
+		final String[] envVarKeys = getKeysWithUppercase(envVar, 2);
 
 		final String envVarKey1 = envVarKeys[0];
 		final String envVarKey1Normalized = envVarKey1.toLowerCase().replace("_", ".");
@@ -95,7 +96,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final Map<String, String> envVar = System.getenv();
 		assertTrue(envVar.size() >= 1);
 
-		final String[] envVarKeys = envVar.keySet().toArray(new String[0]);
+		final String[] envVarKeys = getKeysWithUppercase(envVar, 1);
 
 		final String envVarKey1 = envVarKeys[0];
 		final String envVarKey1Normalized = envVarKey1.toLowerCase().replace("_", ".");
@@ -105,7 +106,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final String customKey2 = UUID.randomUUID().toString();
 
 		final Properlty prop = Properlty.builder()
-				.add(new DoNothingReader(ImmutableMap.of(envVarKey1Normalized, customValue, customKey2, customValue)))
+				.add(DoNothingReader.of(ImmutableMap.of(envVarKey1Normalized, customValue, customKey2, customValue)))
 				.build();
 
 		assertEquals(envVarValue1, prop.get(envVarKey1Normalized).get());
@@ -167,7 +168,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key, "SystemProperty");
 
 			final Properlty prop = Properlty.builder()
-					.add(new DoNothingReader(ImmutableMap.of(key, "customReader")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of(key, "customReader")), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -187,8 +188,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key1, value1);
 
 			final Properlty prop = Properlty.builder()
-					.add(new DoNothingReader(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(new DoNothingReader(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -207,8 +208,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.delimiters(startDelimiter, endDelimiter)
-					.add(new DoNothingReader(ImmutableMap.of("key1", "value1", "key2", "((((key3))))__((key1))")), Properlty.HIGHEST_PRIORITY )
-					.add(new DoNothingReader(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key1", "value1", "key2", "((((key3))))__((key1))")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -221,8 +222,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.ignoreUnresolvablePlaceholders(true)
-					.add(new DoNothingReader(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(new DoNothingReader(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -233,10 +234,31 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	@Test(expected=UnresolvablePlaceholdersException.class)
 	public void shouldFailIfNotResolvedPlaceHolders() {
 			Properlty.builder()
-					.add(new DoNothingReader(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(new DoNothingReader(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
+					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
 					.build();
 	}
 
+
+	private String[] getKeysWithUppercase(Map<String, ?> map, int howMany) {
+		final String[] keys = new String[howMany];
+
+		int current = 0;
+
+		for (final String entry : map.keySet()) {
+			if (entry.matches(".*[A-Z].*")) {
+				keys[current] = entry;
+				current++;
+				if (current >= howMany) {
+					break;
+				}
+			};
+		}
+
+		if (current < howMany) {
+			throw new RuntimeException("Not enough environment variables with at least an uppercase character! Needed [" + howMany + "] found [" + (current-1) + "]");
+		}
+		return keys;
+	}
 
 }

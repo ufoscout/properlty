@@ -25,7 +25,6 @@ import java.util.UUID;
 import org.junit.Test;
 
 import com.properlty.ProperltyBaseTest;
-import com.properlty.reader.SystemPropertiesReader;
 
 public class SystemPropertiesReaderTest extends ProperltyBaseTest{
 
@@ -35,10 +34,10 @@ public class SystemPropertiesReaderTest extends ProperltyBaseTest{
 		final String value = UUID.randomUUID().toString();
 		System.setProperty(key, value);
 
-		final Map<String, String> systemProperties = new SystemPropertiesReader().read();
+		final Map<String, PropertyValue> systemProperties = new SystemPropertiesReader().read();
 		assertNotNull(systemProperties);
 		assertTrue(systemProperties.containsKey(key));
-		assertEquals(value, systemProperties.get(key));
+		assertEquals(value, systemProperties.get(key).getValue());
 
 	}
 

@@ -20,8 +20,11 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
+
+import com.properlty.reader.PropertyValue;
 
 public class ProperltyTest extends ProperltyBaseTest {
 
@@ -32,7 +35,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.get("key.three").isPresent());
 	}
@@ -44,7 +47,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals("value.one", prop.get("key.one").get());
 		assertEquals("value.two", prop.get("key.two").get());
@@ -56,7 +59,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "value.one");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals("value.one", prop.get("key.one", "default"));
 		assertEquals("default", prop.get("key.two", "default"));
@@ -69,7 +72,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.getInt("key.three").isPresent());
 	}
@@ -82,7 +85,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "123");
 		properties.put("key.two", "1000000");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(123, prop.getInt("key.one").get().intValue());
 		assertEquals(1000000, prop.getInt("key.two").get().intValue());
@@ -94,7 +97,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "1");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(1, prop.getInt("key.one", 10));
 		assertEquals(10, prop.getInt("key.two", 10));
@@ -107,7 +110,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "not a number");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		prop.getInt("key.one");
 
@@ -120,7 +123,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.getDouble("key.three").isPresent());
 	}
@@ -133,7 +136,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "123");
 		properties.put("key.two", "1000000");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(123d, prop.getDouble("key.one").get().doubleValue(), 0.1d);
 		assertEquals(1000000d, prop.getDouble("key.two").get().doubleValue(), 0.1d);
@@ -145,7 +148,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "1");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(1d, prop.getDouble("key.one", 1.1111d), 0.1d);
 		assertEquals(10d, prop.getDouble("key.two", 10d), 0.1d);
@@ -158,7 +161,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "not a number");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		prop.getDouble("key.one");
 
@@ -171,7 +174,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.getFloat("key.three").isPresent());
 	}
@@ -184,7 +187,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "123");
 		properties.put("key.two", "1000000");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(123f, prop.getFloat("key.one").get().floatValue(), 0.1f);
 		assertEquals(1000000f, prop.getFloat("key.two").get().floatValue(), 0.1f);
@@ -196,7 +199,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "1");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(1f, prop.getFloat("key.one", 10), 0.1f);
 		assertEquals(10f, prop.getFloat("key.two", 10), 0.1f);
@@ -209,7 +212,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "not a number");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		prop.getFloat("key.one");
 
@@ -222,7 +225,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.getLong("key.three").isPresent());
 	}
@@ -235,7 +238,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "123");
 		properties.put("key.two", "1000000");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(123l, prop.getLong("key.one").get().longValue());
 		assertEquals(1000000l, prop.getLong("key.two").get().longValue());
@@ -247,7 +250,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "1");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(1l, prop.getLong("key.one", 10l));
 		assertEquals(10l, prop.getLong("key.two", 10l));
@@ -260,7 +263,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "not a number");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		prop.getLong("key.one");
 
@@ -273,7 +276,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "value.one");
 		properties.put("key.two", "value.two");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertFalse(prop.getEnum("key.three", NeedSomebodyToLove.class).isPresent());
 	}
@@ -286,7 +289,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 		properties.put("key.one", "ME");
 		properties.put("key.two", "THEM");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove.class).get());
 		assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove.class).get());
@@ -298,7 +301,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "ME");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove.THEM));
 		assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove.THEM));
@@ -311,10 +314,18 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		properties.put("key.one", "not an enum");
 
-		final Properlty prop = new Properlty(properties);
+		final Properlty prop = buildProperlty(properties);
 
 		prop.getEnum("key.one", NeedSomebodyToLove.class);
 
+	}
+
+	private Properlty buildProperlty(Map<String, String> properties) {
+		return new Properlty(properties.entrySet().stream()
+		        .collect(Collectors.toMap(
+		                e -> e.getKey(),
+		                e -> PropertyValue.of(e.getValue())
+		            )));
 	}
 
 }

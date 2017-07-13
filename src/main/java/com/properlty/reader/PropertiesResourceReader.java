@@ -64,15 +64,15 @@ public class PropertiesResourceReader implements Reader {
 	}
 
 	@Override
-	public Map<String, String> read() {
+	public Map<String, PropertyValue> read() {
 		logger.debug("Reading properties from [{}]", resourcePath);
         try(InputStream inputStream = FileUtils.getStream(resourcePath);)
         {
         	final Properties prop = new Properties();
-        	final Map<String, String> map = new HashMap<>();
+        	final Map<String, PropertyValue> map = new HashMap<>();
             prop.load(new InputStreamReader(inputStream, charset));
             for (final Entry<Object, Object> entry : prop.entrySet()) {
-            	map.put((String) entry.getKey(), (String) entry.getValue());
+            	map.put((String) entry.getKey(), PropertyValue.of((String) entry.getValue()));
             }
             return map;
         }

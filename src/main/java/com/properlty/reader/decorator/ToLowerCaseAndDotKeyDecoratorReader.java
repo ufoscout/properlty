@@ -18,6 +18,7 @@ package com.properlty.reader.decorator;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.properlty.reader.PropertyValue;
 import com.properlty.reader.Reader;
 
 /**
@@ -34,8 +35,8 @@ public class ToLowerCaseAndDotKeyDecoratorReader extends DecoratorReader {
 	}
 
 	@Override
-	protected Map<String, String> apply(Map<String, String> input) {
-		final Map<String, String> output = new HashMap<>();
+	protected Map<String, PropertyValue> apply(Map<String, PropertyValue> input) {
+		final Map<String, PropertyValue> output = new HashMap<>();
 		input.forEach((key, value) -> {
 			output.put(key.toLowerCase().replace("_", "."), value);
 		});

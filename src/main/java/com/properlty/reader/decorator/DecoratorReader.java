@@ -17,6 +17,7 @@ package com.properlty.reader.decorator;
 
 import java.util.Map;
 
+import com.properlty.reader.PropertyValue;
 import com.properlty.reader.Reader;
 
 /**
@@ -34,10 +35,10 @@ public abstract class DecoratorReader implements Reader {
 	}
 
 	@Override
-	public Map<String, String> read() {
+	public Map<String, PropertyValue> read() {
 		return apply(reader.read());
 	}
 
-	protected abstract Map<String, String> apply(Map<String, String> input);
+	protected abstract Map<String, PropertyValue> apply(Map<String, PropertyValue> input);
 
 }

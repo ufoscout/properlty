@@ -20,6 +20,6 @@ import java.util.Map;
 @FunctionalInterface
 public interface Reader {
 
-	Map<String, String> read();
+	Map<String, PropertyValue> read();
 
 }

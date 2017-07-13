@@ -16,6 +16,7 @@
 package com.properlty.reader;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * A {@link Reader} that always return the same map
@@ -25,14 +26,22 @@ import java.util.Map;
  */
 public class DoNothingReader implements Reader {
 
-	private final Map<String, String> properties;
+	private final Map<String, PropertyValue> properties;
 
-	public DoNothingReader(Map<String, String> properties) {
+	public DoNothingReader(Map<String, PropertyValue> properties) {
 		this.properties = properties;
 	}
 
+	public static DoNothingReader of(Map<String, String> properties) {
+		return new DoNothingReader(properties.entrySet().stream()
+        .collect(Collectors.toMap(
+                e -> e.getKey(),
+                e -> PropertyValue.of(e.getValue())
+            )));
+	}
+
 	@Override
-	public Map<String, String> read() {
+	public Map<String, PropertyValue> read() {
 		return properties;
 	}
 

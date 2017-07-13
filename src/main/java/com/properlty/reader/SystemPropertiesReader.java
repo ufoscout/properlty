@@ -36,11 +36,11 @@ import java.util.Properties;
 public class SystemPropertiesReader implements Reader {
 
 	@Override
-	public Map<String, String> read() {
-		final Map<String, String> properties = new HashMap<>();
+	public Map<String, PropertyValue> read() {
+		final Map<String, PropertyValue> properties = new HashMap<>();
 		final Properties systemProperties = System.getProperties();
 		for(final Entry<Object, Object> x : systemProperties.entrySet()) {
-		    properties.put((String)x.getKey(), (String)x.getValue());
+		    properties.put((String)x.getKey(), PropertyValue.of((String)x.getValue()));
 		}
 		return properties;
 	}

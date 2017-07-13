@@ -61,7 +61,7 @@ public class PropertiesResourceReaderTest extends ProperltyBaseTest {
 	public void shouldIgnoreFileNotFoundIfNeeded() {
 			final boolean ignoreNotFound = true;
 			final String path = UUID.randomUUID().toString();
-			final Map<String, String> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
+			final Map<String, PropertyValue> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
 			assertNotNull(properties);
 			assertTrue(properties.isEmpty());
 	}
@@ -70,34 +70,34 @@ public class PropertiesResourceReaderTest extends ProperltyBaseTest {
 	public void shouldReadProperiesFromFile() {
 			final boolean ignoreNotFound = false;
 			final String path = "./src/test/files/test1.properties";
-			final Map<String, String> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
+			final Map<String, PropertyValue> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
 			assertNotNull(properties);
 			assertFalse(properties.isEmpty());
 
 			assertTrue(properties.containsKey("keyOne"));
-			assertEquals("firstvalue", properties.get("keyOne"));
+			assertEquals("firstvalue", properties.get("keyOne").getValue());
 
 			assertTrue(properties.containsKey("keyTwo"));
-			assertEquals("second VALUE", properties.get("keyTwo"));
+			assertEquals("second VALUE", properties.get("keyTwo").getValue());
 	}
 
 	@Test
 	public void shouldReadProperiesFromClasspath() {
 			final boolean ignoreNotFound = false;
 			final String path = FileUtils.CLASSPATH_PREFIX + "resource1.properties";
-			final Map<String, String> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
+			final Map<String, PropertyValue> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
 			assertNotNull(properties);
 			assertFalse(properties.isEmpty());
 
 			assertTrue(properties.containsKey("name"));
-			assertEquals("resource1", properties.get("name"));
+			assertEquals("resource1", properties.get("name").getValue());
 	}
 
 	@Test
 	public void shouldReadEmptyProperiesFile() {
 			final boolean ignoreNotFound = false;
 			final String path = "./src/test/files/empty.properties";
-			final Map<String, String> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
+			final Map<String, PropertyValue> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
 			assertNotNull(properties);
 			assertTrue(properties.isEmpty());
 	}

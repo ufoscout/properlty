@@ -23,18 +23,18 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.properlty.ProperltyBaseTest;
-import com.properlty.reader.EnvironmentVariablesReader;
 
 public class EnvironmentVariablesReaderTest extends ProperltyBaseTest {
 
 	@Test
-	public void shouldReturnEnvironmentVariables() {
-		final Map<String, String> var = new EnvironmentVariablesReader().read();
+	public void shouldReturnUnresolvableEnvironmentVariables() {
+		final Map<String, PropertyValue> var = new EnvironmentVariablesReader().read();
 		assertNotNull(var);
 		assertFalse(var.isEmpty());
 
 		var.forEach((key, value) -> {
-			getLogger().info("Found Environment variable {} = {}" ,key ,value);
+			assertFalse(value.isResolvable());
+			getLogger().info("Found Environment variable {} = {}", key, value.getValue());
 		});
 	}
 

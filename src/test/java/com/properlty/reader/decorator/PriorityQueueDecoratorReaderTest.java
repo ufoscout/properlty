@@ -26,13 +26,14 @@ import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 import com.properlty.ProperltyBaseTest;
 import com.properlty.reader.DoNothingReader;
+import com.properlty.reader.PropertyValue;
 
 public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldReturnEmptyMapIfEmpty() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertTrue(prop.isEmpty());
 	}
@@ -41,50 +42,50 @@ public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 	public void shouldMergeEntriesFromMapWithDifferentPriority() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1", "k2", "v2")), 11);
-		queue.add(new DoNothingReader(ImmutableMap.of("k3", "v3", "k4", "v4")), 1);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1", "k2", "v2")), 11);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k3", "v3", "k4", "v4")), 1);
 
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertEquals(4, prop.size());
 
-		assertEquals("v1", prop.get("k1"));
-		assertEquals("v2", prop.get("k2"));
-		assertEquals("v3", prop.get("k3"));
-		assertEquals("v4", prop.get("k4"));
+		assertEquals("v1", prop.get("k1").getValue());
+		assertEquals("v2", prop.get("k2").getValue());
+		assertEquals("v3", prop.get("k3").getValue());
+		assertEquals("v4", prop.get("k4").getValue());
 	}
 
 	@Test
 	public void shouldMergeEntriesFromMapWithSamePriority() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1", "k2", "v2")), 11);
-		queue.add(new DoNothingReader(ImmutableMap.of("k3", "v3", "k4", "v4")), 11);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1", "k2", "v2")), 11);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k3", "v3", "k4", "v4")), 11);
 
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertEquals(4, prop.size());
 
-		assertEquals("v1", prop.get("k1"));
-		assertEquals("v2", prop.get("k2"));
-		assertEquals("v3", prop.get("k3"));
-		assertEquals("v4", prop.get("k4"));
+		assertEquals("v1", prop.get("k1").getValue());
+		assertEquals("v2", prop.get("k2").getValue());
+		assertEquals("v3", prop.get("k3").getValue());
+		assertEquals("v4", prop.get("k4").getValue());
 	}
 
 	@Test
 	public void shouldTakeIntoAccountPriorityInCaseOfCollisions() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1", "k2", "v2-first")), 2);
-		queue.add(new DoNothingReader(ImmutableMap.of("k3", "v3", "k2", "v2-second")), 1);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1", "k2", "v2-first")), 2);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k3", "v3", "k2", "v2-second")), 1);
 
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertEquals(3, prop.size());
 
-		assertEquals("v1", prop.get("k1"));
-		assertEquals("v2-second", prop.get("k2"));
-		assertEquals("v3", prop.get("k3"));
+		assertEquals("v1", prop.get("k1").getValue());
+		assertEquals("v2-second", prop.get("k2").getValue());
+		assertEquals("v3", prop.get("k3").getValue());
 
 	}
 
@@ -92,16 +93,16 @@ public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 	public void shouldTakeIntoAccountInsertionOrderForSamePriorityInCaseOfCollisions() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(new DoNothingReader(ImmutableMap.of("k3", "v3", "k2", "v2-second")), 1);
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1", "k2", "v2-first")), 1);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k3", "v3", "k2", "v2-second")), 1);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1", "k2", "v2-first")), 1);
 
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertEquals(3, prop.size());
 
-		assertEquals("v1", prop.get("k1"));
-		assertEquals("v2-first", prop.get("k2"));
-		assertEquals("v3", prop.get("k3"));
+		assertEquals("v1", prop.get("k1").getValue());
+		assertEquals("v2-first", prop.get("k2").getValue());
+		assertEquals("v3", prop.get("k3").getValue());
 
 	}
 
@@ -109,19 +110,19 @@ public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 	public void shouldTakeIntoAccountInsertionOrderAndPriority() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1-first",  "k2", "v2-first",                    "k4", "v4-first")), 10);
-		queue.add(new DoNothingReader(ImmutableMap.of("k1", "v1-second", "k2", "v2-second", "k3", "v3-second")), 10);
-		queue.add(new DoNothingReader(ImmutableMap.of(                   "k2", "v2-third",  "k3", "v3-third",                   "k5", "v5-third")), 5);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1-first",  "k2", "v2-first",                    "k4", "v4-first")), 10);
+		queue.add(DoNothingReader.of(ImmutableMap.of("k1", "v1-second", "k2", "v2-second", "k3", "v3-second")), 10);
+		queue.add(DoNothingReader.of(ImmutableMap.of(                   "k2", "v2-third",  "k3", "v3-third",                   "k5", "v5-third")), 5);
 
-		final Map<String, String> prop = queue.read();
+		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
 		assertEquals(5, prop.size());
 
-		assertEquals("v1-second", prop.get("k1"));
-		assertEquals("v2-third",  prop.get("k2"));
-		assertEquals("v3-third",  prop.get("k3"));
-		assertEquals("v4-first",  prop.get("k4"));
-		assertEquals("v5-third",  prop.get("k5"));
+		assertEquals("v1-second", prop.get("k1").getValue());
+		assertEquals("v2-third",  prop.get("k2").getValue());
+		assertEquals("v3-third",  prop.get("k3").getValue());
+		assertEquals("v4-first",  prop.get("k4").getValue());
+		assertEquals("v5-third",  prop.get("k5").getValue());
 
 	}
 

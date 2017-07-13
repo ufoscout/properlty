@@ -20,13 +20,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.Test;
 
-import com.properlty.reader.DoNothingReader;
+import com.properlty.reader.Properties;
 import com.properlty.reader.PropertyValue;
 import com.properlty.reader.Reader;
 
@@ -34,13 +32,10 @@ public class ToLowerCaseAndDotKeyDecoratorReaderTest {
 
 	@Test
 	public void shouldLowerCaseInputMapWithoutSideEffect() {
-		final Map<String, String> properties = new HashMap<>();
 
-		properties.put("UPPER_CASE_KEY_ONE", UUID.randomUUID().toString());
-		properties.put("lower_case_key_TWO", UUID.randomUUID().toString());
-		properties.put("lower.case.key.three", UUID.randomUUID().toString());
-
-		final Reader input = DoNothingReader.of(properties);
+		final Reader input = Properties.add("UPPER_CASE_KEY_ONE", "value1")
+				.add("lower_case_key_TWO", "value2")
+				.add("lower.case.key.three", "value3");
 
 		final Map<String, PropertyValue> lowerCased = new ToLowerCaseAndDotKeyDecoratorReader(input).read();
 
@@ -54,9 +49,9 @@ public class ToLowerCaseAndDotKeyDecoratorReaderTest {
 		assertFalse(lowerCased.containsKey("UPPER_CASE_KEY_ONE"));
 		assertFalse(lowerCased.containsKey("lower.case.key.TWO"));
 
-		assertEquals( properties.get("UPPER_CASE_KEY_ONE") , lowerCased.get("upper.case.key.one").getValue() );
-		assertEquals( properties.get("lower_case_key_TWO") , lowerCased.get("lower.case.key.two").getValue() );
-		assertEquals( properties.get("lower.case.key.three") , lowerCased.get("lower.case.key.three").getValue() );
+		assertEquals( "value1" , lowerCased.get("upper.case.key.one").getValue() );
+		assertEquals( "value2" , lowerCased.get("lower.case.key.two").getValue() );
+		assertEquals( "value3" , lowerCased.get("lower.case.key.three").getValue() );
 
 	}
 

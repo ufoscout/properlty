@@ -15,34 +15,48 @@
  ******************************************************************************/
 package com.properlty.reader;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * A {@link Reader} that always return the same map
+ * A simple {@link Reader} to programmatically manage properties.
  *
  * @author Francesco Cina
  *
  */
-public class DoNothingReader implements Reader {
+public class ProprammaticPropertiesReader implements Reader {
 
-	private final Map<String, PropertyValue> properties;
+	private final Map<String, PropertyValue> properties = new HashMap<>();
 
-	public DoNothingReader(Map<String, PropertyValue> properties) {
-		this.properties = properties;
-	}
-
-	public static DoNothingReader of(Map<String, String> properties) {
-		return new DoNothingReader(properties.entrySet().stream()
-        .collect(Collectors.toMap(
-                e -> e.getKey(),
-                e -> PropertyValue.of(e.getValue())
-            )));
-	}
+	ProprammaticPropertiesReader() {}
 
 	@Override
 	public Map<String, PropertyValue> read() {
 		return properties;
+	}
+
+	/**
+	 * Add a new property
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public ProprammaticPropertiesReader add(String key, String value) {
+		properties.put(key, PropertyValue.of(value));
+		return this;
+	}
+
+	/**
+	 * Add a new property
+	 *
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public ProprammaticPropertiesReader add(String key, PropertyValue value) {
+		properties.put(key, value);
+		return this;
 	}
 
 }

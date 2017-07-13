@@ -29,9 +29,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.properlty.exception.UnresolvablePlaceholdersException;
-import com.properlty.reader.DoNothingReader;
+import com.properlty.reader.Properties;
 import com.properlty.reader.PropertiesResourceReader;
 
 public class ProperltyBuilderTest extends ProperltyBaseTest {
@@ -106,7 +105,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final String customKey2 = UUID.randomUUID().toString();
 
 		final Properlty prop = Properlty.builder()
-				.add(DoNothingReader.of(ImmutableMap.of(envVarKey1Normalized, customValue, customKey2, customValue)))
+				.add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
 				.build();
 
 		assertEquals(envVarValue1, prop.get(envVarKey1Normalized).get());
@@ -168,7 +167,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key, "SystemProperty");
 
 			final Properlty prop = Properlty.builder()
-					.add(DoNothingReader.of(ImmutableMap.of(key, "customReader")), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add(key, "customReader"), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -188,8 +187,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key1, value1);
 
 			final Properlty prop = Properlty.builder()
-					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -208,8 +207,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.delimiters(startDelimiter, endDelimiter)
-					.add(DoNothingReader.of(ImmutableMap.of("key1", "value1", "key2", "((((key3))))__((key1))")), Properlty.HIGHEST_PRIORITY )
-					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key1", "value1").add("key2", "((((key3))))__((key1))"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -222,8 +221,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.ignoreUnresolvablePlaceholders(true)
-					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -234,8 +233,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	@Test(expected=UnresolvablePlaceholdersException.class)
 	public void shouldFailIfNotResolvedPlaceHolders() {
 			Properlty.builder()
-					.add(DoNothingReader.of(ImmutableMap.of("key2", "${${key3}}__${key1}")), Properlty.HIGHEST_PRIORITY )
-					.add(DoNothingReader.of(ImmutableMap.of("key3", "key1")), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
 					.build();
 	}
 

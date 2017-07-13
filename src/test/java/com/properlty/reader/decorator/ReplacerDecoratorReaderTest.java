@@ -20,28 +20,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Test;
 
 import com.properlty.ProperltyBaseTest;
 import com.properlty.exception.UnresolvablePlaceholdersException;
-import com.properlty.reader.DoNothingReader;
+import com.properlty.reader.Properties;
 import com.properlty.reader.PropertyValue;
+import com.properlty.reader.ProprammaticPropertiesReader;
 
 public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldResolveSimpleKeys() {
-		final Map<String, String> properties = new HashMap<>();
-
-		properties.put("key.one", "${key.two}");
-		properties.put("key.two", "value.two");
+		final ProprammaticPropertiesReader properties = Properties.add("key.one", "${key.two}");
+		properties.add("key.two", "value.two");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(2, output.size());
@@ -53,14 +50,12 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldNotResolveUnresolvableKeys() {
-		final Map<String, PropertyValue> properties = new HashMap<>();
-
-		properties.put("key.unresolvable", PropertyValue.of("${key.two}").resolvable(false));
-		properties.put("key.one", PropertyValue.of("${key.two}"));
-		properties.put("key.two", PropertyValue.of("value.two"));
+		final ProprammaticPropertiesReader properties = Properties.add("key.unresolvable", PropertyValue.of("${key.two}").resolvable(false));
+		properties.add("key.one", PropertyValue.of("${key.two}"));
+		properties.add("key.two", PropertyValue.of("value.two"));
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(new DoNothingReader(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(3, output.size());
@@ -73,16 +68,14 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldFailIfNotResolvablePlaceholders() {
-		final Map<String, String> properties = new HashMap<>();
-
-		properties.put("key.1", "${key.4}");
-		properties.put("key.2", "${key.1}");
-		properties.put("key.3", "${key.2}");
-		properties.put("key.4", "${key.3}");
+		final ProprammaticPropertiesReader properties = Properties.add("key.1", "${key.4}");
+		properties.add("key.2", "${key.1}");
+		properties.add("key.3", "${key.2}");
+		properties.add("key.4", "${key.3}");
 
 		final boolean ignoreNotResolvable = false;
 		try {
-			new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+			new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 			fail();
 		} catch (final UnresolvablePlaceholdersException e) {
 			final String message = e.getMessage();
@@ -96,12 +89,10 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldNotLoopOnSelfReferencingKeys() {
-		final Map<String, String> properties = new HashMap<>();
-
-		properties.put("key.one", "${key.one}");
+		final ProprammaticPropertiesReader properties = Properties.add("key.one", "${key.one}");
 
 		final boolean ignoreNotResolvable = true;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(1, output.size());
@@ -112,13 +103,11 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldNotResolveCircularReferencingKeys() {
-		final Map<String, String> properties = new HashMap<>();
-
-		properties.put("key.one", "${key.two}");
-		properties.put("key.two", "${key.one}");
+		final ProprammaticPropertiesReader properties = Properties.add("key.one", "${key.two}");
+		properties.add("key.two", "${key.one}");
 
 		final boolean ignoreNotResolvable = true;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(2, output.size());
@@ -130,15 +119,13 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldRecursivelyResolveKeys() {
-		final Map<String, String> properties = new TreeMap<>();
-
-		properties.put("key.1", "${key.2}");
-		properties.put("key.2", "${key.3} world!");
-		properties.put("key.3", "Hello");
-		properties.put("key.4", "${key.2}");
+		final ProprammaticPropertiesReader properties = Properties.add("key.1", "${key.2}");
+		properties.add("key.2", "${key.3} world!");
+		properties.add("key.3", "Hello");
+		properties.add("key.4", "${key.2}");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(4, output.size());
@@ -152,15 +139,13 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
 	@Test
 	public void shouldRecursivelyResolveDynamicKeys() {
-		final Map<String, String> properties = new TreeMap<>();
-
-		properties.put("key.1", "${${key.2}}");
-		properties.put("key.2", "${key.3}");
-		properties.put("key.3", "key.4");
-		properties.put("key.4", "Hello world!");
+		final ProprammaticPropertiesReader properties = Properties.add("key.1", "${${key.2}}");
+		properties.add("key.2", "${key.3}");
+		properties.add("key.3", "key.4");
+		properties.add("key.4", "Hello world!");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(DoNothingReader.of(properties), "${", "}", ignoreNotResolvable).read();
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ignoreNotResolvable).read();
 		assertNotNull(output);
 
 		assertEquals(4, output.size());

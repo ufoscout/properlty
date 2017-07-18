@@ -25,7 +25,7 @@ import java.lang.reflect.Proxy;
 
 import org.junit.Test;
 
-import com.properlty.ProperltyBaseTest;
+import com.ufoscout.properlty.ProperltyBaseTest;
 
 public class JavaProxyTest extends ProperltyBaseTest {
 

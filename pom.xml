@@ -142,4 +142,23 @@
         </profile>
     </profiles>
 
+    <scm>
+        <connection>scm:git:ssh://github.com/ufoscout/properlty.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/ufoscout/properlty.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://github.com/ufoscout/properlty</url>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>nexus-sonatype-release</id>
+            <name>Nexus Release Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-sonatype-snapshot</id>
+            <name>Nexus Snapshots Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>

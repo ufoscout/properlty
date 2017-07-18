@@ -8,6 +8,22 @@
     <packaging>pom</packaging>
 
     <name>properlty</name>
+    <description>https://github.com/ufoscout/properlty</description>
+    <url>https://github.com/ufoscout/properlty</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>francesco.cina</id>
+            <name>Francesco Cina'</name>
+            <email>ufoscout@gmail.com</email>
+        </developer>
+    </developers>
 
     <modules>
         <module>properlty-common</module>

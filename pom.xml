@@ -42,6 +42,7 @@
 
         <maven.compiler.plugin.version>3.6.1</maven.compiler.plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <dokka-maven-plugin.version>0.9.15</dokka-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -107,6 +108,19 @@
                     <configuration>
                         <jvmTarget>${java.version}</jvmTarget>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>pre-site</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

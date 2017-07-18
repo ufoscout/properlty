@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.ufoscout.properlty.Properlty;
 import com.ufoscout.properlty.reader.PropertyValue;
 
 public class ProperltyTest extends ProperltyBaseTest {

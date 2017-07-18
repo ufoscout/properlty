@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import com.ufoscout.properlty.Properlty;
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException;
 import com.ufoscout.properlty.reader.Properties;
 import com.ufoscout.properlty.reader.PropertiesResourceReader;

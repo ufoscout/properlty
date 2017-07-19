@@ -274,7 +274,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertNull(prop.getEnum("key.three", NeedSomebodyToLove::class.java))
+        assertNull(prop.getEnum<NeedSomebodyToLove>("key.three"))
     }
 
 
@@ -287,8 +287,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove::class.java))
-        assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove::class.java))
+        assertEquals(NeedSomebodyToLove.ME, prop.getEnum<NeedSomebodyToLove>("key.one"))
+        assertEquals(NeedSomebodyToLove.THEM, prop.getEnum<NeedSomebodyToLove>("key.two"))
     }
 
     @Test
@@ -312,7 +312,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        prop.getEnum("key.one", NeedSomebodyToLove::class.java)
+        prop.getEnum<NeedSomebodyToLove>("key.one")
 
     }
 

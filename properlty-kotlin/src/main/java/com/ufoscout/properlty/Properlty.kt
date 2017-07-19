@@ -60,7 +60,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
         if (value!=null) {
             return map(value)
         }
-        return null;
+        return null
     }
 
     /**
@@ -76,7 +76,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     operator fun <T> get(key: String, defaultValue: T, map: (String) -> T): T {
-        val value = get(key, map);
+        val value = get(key, map)
         return value ?: defaultValue
     }
 
@@ -179,8 +179,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun <T : Enum<T>> getEnum(key: String, type: Class<T>): T? {
-        return get(key, {java.lang.Enum.valueOf<T>(type, it)})
+    inline fun <reified T : Enum<T>> getEnum(key: String): T? {
+        return get(key, {java.lang.Enum.valueOf<T>(T::class.java, it)})
     }
 
     /**
@@ -192,7 +192,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun <T : Enum<T>> getEnum(key: String, defaultValue: T): T {
-        return getEnum(key, defaultValue.javaClass) ?: defaultValue
+        return get(key, {java.lang.Enum.valueOf<T>(defaultValue.javaClass, it)}) ?: defaultValue
     }
 
     /**
@@ -209,7 +209,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
         if (value!=null) {
             return value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         }
-        return arrayOf<String>();
+        return arrayOf()
     }
 
     /**

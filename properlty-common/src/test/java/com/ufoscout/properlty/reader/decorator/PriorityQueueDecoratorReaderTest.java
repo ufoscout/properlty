@@ -93,8 +93,8 @@ public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 	public void shouldTakeIntoAccountInsertionOrderForSamePriorityInCaseOfCollisions() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(Properties.add("k3", "v3").add("k2", "v2-second"), 1);
 		queue.add(Properties.add("k1", "v1").add("k2", "v2-first"), 1);
+		queue.add(Properties.add("k3", "v3").add("k2", "v2-second"), 1);
 
 		final Map<String, PropertyValue> prop = queue.read();
 		assertNotNull(prop);
@@ -110,8 +110,8 @@ public class PriorityQueueDecoratorReaderTest extends ProperltyBaseTest {
 	public void shouldTakeIntoAccountInsertionOrderAndPriority() {
 		final PriorityQueueDecoratorReader queue = new PriorityQueueDecoratorReader();
 
-		queue.add(Properties.add("k1", "v1-first").add("k2", "v2-first").add("k4", "v4-first"), 10);
 		queue.add(Properties.add("k1", "v1-second").add("k2", "v2-second").add("k3", "v3-second"), 10);
+		queue.add(Properties.add("k1", "v1-first").add("k2", "v2-first").add("k4", "v4-first"), 10);
 		queue.add(Properties.add("k2", "v2-third").add("k3", "v3-third").add("k5", "v5-third"), 5);
 
 		final Map<String, PropertyValue> prop = queue.read();

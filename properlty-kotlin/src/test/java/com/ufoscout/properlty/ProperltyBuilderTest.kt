@@ -141,9 +141,9 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
     @Test
     fun shouldConsiderFileAddPriority() {
         val prop = Properlty.builder()
-                .add("file:./src/test/files/test1.properties")
-                .add("classpath:resource1.properties")
                 .add("classpath:inner/resource2.properties")
+                .add("classpath:resource1.properties")
+                .add("file:./src/test/files/test1.properties")
                 .build()
 
         // from file:./src/test/files/test1.properties

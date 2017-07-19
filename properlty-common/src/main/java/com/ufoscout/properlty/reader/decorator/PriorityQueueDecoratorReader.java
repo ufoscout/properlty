@@ -15,12 +15,7 @@
  ******************************************************************************/
 package com.ufoscout.properlty.reader.decorator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.ufoscout.properlty.reader.PropertyValue;
 import com.ufoscout.properlty.reader.Reader;
@@ -43,10 +38,20 @@ public class PriorityQueueDecoratorReader implements Reader {
 		final Map<String, PropertyValue> result =  new HashMap<>();
 
 		readersMap.forEach((priority, readers) -> {
+
+			// Generate an iterator. Start just after the last element.
+			ListIterator<Reader> li = readers.listIterator(readers.size());
+			// Iterate in reverse.
+			while(li.hasPrevious()) {
+				final Map<String, PropertyValue> entries = li.previous().read();
+				result.putAll(entries);
+			}
+/*
 			readers.forEach(reader -> {
 				final Map<String, PropertyValue> entries = reader.read();
 				result.putAll(entries);
 			});
+			*/
 		}) ;
 
 		return result;

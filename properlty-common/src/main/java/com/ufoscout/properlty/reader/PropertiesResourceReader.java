@@ -15,6 +15,9 @@
  ******************************************************************************/
 package com.ufoscout.properlty.reader;
 
+import com.ufoscout.properlty.exception.ResourceNotFoundException;
+import com.ufoscout.properlty.util.FileUtils;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,12 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ufoscout.properlty.exception.ResourceNotFoundException;
-import com.ufoscout.properlty.util.FileUtils;
-
 /**
  * Return a {@link Map} with all values from a properties file.
  *
@@ -39,7 +36,6 @@ import com.ufoscout.properlty.util.FileUtils;
  */
 public class PropertiesResourceReader implements Reader {
 
-	private final Logger logger = LoggerFactory.getLogger(PropertiesResourceReader.class);
 	private final String resourcePath;
 	private boolean ignoreNotFound = false;
 	private Charset charset = StandardCharsets.UTF_8;
@@ -53,7 +49,7 @@ public class PropertiesResourceReader implements Reader {
 	 * - file:./path/file : same as previous case, a path of a file in the filesystem
 	 * - classpath:/path/file : path of a resource in the classpath
 	 *
-	 * @param path the path on the filesystem of the properties file
+	 * @param resourcePath the path on the filesystem of the properties file
 	 */
 	public static PropertiesResourceReader build(String resourcePath) {
 		return new PropertiesResourceReader(resourcePath);
@@ -65,8 +61,7 @@ public class PropertiesResourceReader implements Reader {
 
 	@Override
 	public Map<String, PropertyValue> read() {
-		logger.debug("Reading properties from [{}]", resourcePath);
-        try(InputStream inputStream = FileUtils.getStream(resourcePath);)
+        try(InputStream inputStream = FileUtils.getStream(resourcePath))
         {
         	final Properties prop = new Properties();
         	final Map<String, PropertyValue> map = new HashMap<>();
@@ -78,7 +73,6 @@ public class PropertiesResourceReader implements Reader {
         }
         catch (final FileNotFoundException e) {
         	if (ignoreNotFound) {
-        		logger.warn("Cannot access properties file [{}]. Error [{}]", resourcePath, e.getMessage());
         		return new HashMap<>();
         	} else {
         		throw new ResourceNotFoundException(e);

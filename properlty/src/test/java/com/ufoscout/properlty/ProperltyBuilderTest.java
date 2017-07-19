@@ -52,7 +52,6 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		for (final Entry<String, String> envEntry : envVar.entrySet()) {
 
 			final String key = envEntry.getKey();
-			getLogger().info("Checking key [{}]", key);
 
 			final String value = envEntry.getValue();
 			assertEquals(value, prop.get(key).get());

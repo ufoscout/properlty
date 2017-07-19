@@ -15,21 +15,16 @@
  ******************************************************************************/
 package com.ufoscout.properlty.reader.decorator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.Map;
-
-import org.junit.Test;
-
 import com.ufoscout.properlty.ProperltyBaseTest;
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException;
 import com.ufoscout.properlty.reader.Properties;
 import com.ufoscout.properlty.reader.PropertyValue;
 import com.ufoscout.properlty.reader.ProprammaticPropertiesReader;
-import com.ufoscout.properlty.reader.decorator.ReplacerDecoratorReader;
+import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 
@@ -80,7 +75,6 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 			fail();
 		} catch (final UnresolvablePlaceholdersException e) {
 			final String message = e.getMessage();
-			getLogger().error(message, e);
 			assertTrue(message.contains("key: [key.1] value: [${key.4}]"));
 			assertTrue(message.contains("key: [key.2] value: [${key.1}]"));
 			assertTrue(message.contains("key: [key.3] value: [${key.2}]"));

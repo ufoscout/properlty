@@ -41,8 +41,6 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
 
         for ((key, value) in envVar) {
 
-            logger.info("Checking key [{}]", key)
-
             assertEquals(value, prop[key])
 
             val normalizedKey = key.toLowerCase().replace("_", ".")

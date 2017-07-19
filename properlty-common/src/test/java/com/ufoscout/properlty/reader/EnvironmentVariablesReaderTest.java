@@ -15,16 +15,13 @@
  ******************************************************************************/
 package com.ufoscout.properlty.reader;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import com.ufoscout.properlty.ProperltyBaseTest;
+import org.junit.Test;
 
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.ufoscout.properlty.ProperltyBaseTest;
-import com.ufoscout.properlty.reader.EnvironmentVariablesReader;
-import com.ufoscout.properlty.reader.PropertyValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class EnvironmentVariablesReaderTest extends ProperltyBaseTest {
 
@@ -36,7 +33,6 @@ public class EnvironmentVariablesReaderTest extends ProperltyBaseTest {
 
 		var.forEach((key, value) -> {
 			assertFalse(value.isResolvable());
-			getLogger().info("Found Environment variable {} = {}", key, value.getValue());
 		});
 	}
 

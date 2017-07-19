@@ -26,16 +26,6 @@ import com.ufoscout.properlty.reader.PropertyValue;
 
 public class Properlty {
 
-	public static final int HIGHEST_PRIORITY = 0;
-	public static final int DEFAULT_SYSTEM_PROPERTIES_PRIORITY = 100;
-	public static final int DEFAULT_ENVIRONMENT_VARIABLES_PRIORITY = 1000;
-	public static final int DEFAULT_PRIORITY = 10000;
-	public static final int LOWEST_PRIORITY = Integer.MAX_VALUE;
-
-	public static final String DEFAULT_START_DELIMITER = "${";
-	public static final String DEFAULT_END_DELIMITER = "}";
-	public static final String DEFAULT_LIST_SEPARATOR = ",";
-
 	private final Map<String, PropertyValue> properties;
 
 	public static ProperltyBuilder builder() {
@@ -217,13 +207,13 @@ public class Properlty {
 
 	/**
 	 * Return the property value associated with the given key split with the default separator.
-	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 * The default separator is {@value Default#LIST_SEPARATOR}}
 	 *
 	 * @param key
 	 * @return
 	 */
 	public String[] getArray(String key) {
-		return getArray(key, DEFAULT_LIST_SEPARATOR);
+		return getArray(key, Default.LIST_SEPARATOR);
 	}
 
 	/**
@@ -239,7 +229,7 @@ public class Properlty {
 
 	/**
 	 * Return the property value associated with the given key split with the default separator.
-	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 * The default separator is {@value Default#LIST_SEPARATOR}}
 	 *
 	 * @param key
 	 * @return
@@ -262,13 +252,13 @@ public class Properlty {
 	/**
 	 * Return the property value associated with the given key split with the default separator
 	 * and apply the map function to elements in the resulting list.
-	 * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+	 * The default separator is {@value Default#LIST_SEPARATOR}}
 	 *
 	 * @param key
 	 * @return
 	 */
 	public <T> List<T> getList(String key, Function<String, T> map) {
-		return getList(key, DEFAULT_LIST_SEPARATOR, map);
+		return getList(key, Default.LIST_SEPARATOR, map);
 	}
 
 	/**

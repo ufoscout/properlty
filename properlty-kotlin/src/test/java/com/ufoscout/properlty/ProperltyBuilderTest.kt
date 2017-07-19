@@ -17,7 +17,7 @@ package com.ufoscout.properlty
 
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException
 import com.ufoscout.properlty.reader.Properties
-import com.ufoscout.properlty.reader.PropertiesResourceReader
+import com.ufoscout.properlty.reader.SystemPropertiesReader
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.FileNotFoundException
@@ -109,7 +109,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             System.setProperty(key, key)
 
             val prop = Properlty.builder()
-                    .add(PropertiesResourceReader.build("NOT VALID PATH").ignoreNotFound(true).charset(StandardCharsets.UTF_8))
+                    .add(SystemPropertiesReader())
+                    .add("NOT VALID PATH", true, StandardCharsets.UTF_8)
                     .build()
             assertNotNull(prop)
 
@@ -157,7 +158,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             System.setProperty(key, "SystemProperty")
 
             val prop = Properlty.builder()
-                    .add(Properties.add(key, "customReader"), Properlty.HIGHEST_PRIORITY)
+                    .add(Properties.add(key, "customReader"), Default.HIGHEST_PRIORITY)
                     .build()
             assertNotNull(prop)
 
@@ -177,8 +178,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             System.setProperty(key1, value1)
 
             val prop = Properlty.builder()
-                    .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Properlty.HIGHEST_PRIORITY)
-                    .add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY)
+                    .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Default.HIGHEST_PRIORITY)
+                    .add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY)
                     .build()
             assertNotNull(prop)
 
@@ -197,8 +198,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
 
         val prop = Properlty.builder()
                 .delimiters(startDelimiter, endDelimiter)
-                .add(Properties.add("key1", "value1").add("key2", "((((key3))))__((key1))"), Properlty.HIGHEST_PRIORITY)
-                .add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY)
+                .add(Properties.add("key1", "value1").add("key2", "((((key3))))__((key1))"), Default.HIGHEST_PRIORITY)
+                .add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY)
                 .build()
         assertNotNull(prop)
 
@@ -211,8 +212,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
 
         val prop = Properlty.builder()
                 .ignoreUnresolvablePlaceholders(true)
-                .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Properlty.HIGHEST_PRIORITY)
-                .add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY)
+                .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Default.HIGHEST_PRIORITY)
+                .add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY)
                 .build()
         assertNotNull(prop)
 
@@ -223,8 +224,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
     @Test(expected = UnresolvablePlaceholdersException::class)
     fun shouldFailIfNotResolvedPlaceHolders() {
         Properlty.builder()
-                .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Properlty.HIGHEST_PRIORITY)
-                .add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY)
+                .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Default.HIGHEST_PRIORITY)
+                .add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY)
                 .build()
     }
 

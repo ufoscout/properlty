@@ -28,9 +28,9 @@ import com.ufoscout.properlty.reader.Reader;
  * @author Francesco Cina
  *
  */
-public class ToLowerCaseAndDotKeyDecoratorReader extends DecoratorReader {
+public class ToLowerCaseAndDotKeyReader extends DecoratorReader {
 
-	public ToLowerCaseAndDotKeyDecoratorReader(Reader reader) {
+	public ToLowerCaseAndDotKeyReader(Reader reader) {
 		super(reader);
 	}
 

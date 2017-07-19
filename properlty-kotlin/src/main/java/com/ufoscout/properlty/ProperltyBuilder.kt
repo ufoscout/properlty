@@ -15,65 +15,42 @@
  */
 package com.ufoscout.properlty
 
-import com.ufoscout.properlty.reader.EnvironmentVariablesReader
 import com.ufoscout.properlty.reader.PropertiesResourceReader
 import com.ufoscout.properlty.reader.Reader
-import com.ufoscout.properlty.reader.SystemPropertiesReader
 import com.ufoscout.properlty.reader.decorator.PriorityQueueDecoratorReader
 import com.ufoscout.properlty.reader.decorator.ReplacerDecoratorReader
-import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyDecoratorReader
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class ProperltyBuilder internal constructor() {
-
-    private val systemPropertiesPriority = Properlty.DEFAULT_SYSTEM_PROPERTIES_PRIORITY
-    private val environmentVariablesPriority = Properlty.DEFAULT_ENVIRONMENT_VARIABLES_PRIORITY
-
-    /**
-     * Return the default priority of readers added without explicitly
-     * declaring the priority.
-     * Default value is [Properlty.DEFAULT_PRIORITY]
-     * @return the default priority
-     */
-    var defaultPriority = Properlty.DEFAULT_PRIORITY
-        private set
 
     private val reader = PriorityQueueDecoratorReader()
     /**
      * Return the start delimiter of the placeholders.
-     * Default value is [Properlty.DEFAULT_START_DELIMITER]
+     * Default value is [Default.START_DELIMITER]
 
      * @return the start delimiter
      */
-    var startDelimiter = Properlty.DEFAULT_START_DELIMITER
+    var startDelimiter = Default.START_DELIMITER
         private set
     /**
      * Return the end delimiter of the placeholders.
-     * Default value is [Properlty.DEFAULT_END_DELIMITER]
+     * Default value is [Default.END_DELIMITER]
 
      * @return the end delimiter
      */
-    var endDelimiter = Properlty.DEFAULT_END_DELIMITER
+    var endDelimiter = Default.END_DELIMITER
         private set
+
     private var ignoreUnresolvablePlaceholders = false
 
+    /*
     init {
         reader.add(EnvironmentVariablesReader(), environmentVariablesPriority)
-        reader.add(ToLowerCaseAndDotKeyDecoratorReader(EnvironmentVariablesReader()), environmentVariablesPriority)
+        reader.add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()), environmentVariablesPriority)
         reader.add(SystemPropertiesReader(), systemPropertiesPriority)
     }
-
-    /**
-     * Set the defaultPriority of Readers added without explicitly
-     * priority declaration.
-
-     * @param defaultPriority positive integer value; the higher the value the lower the priority. 0 is the highest priority.
-     * *
-     * @return
-     */
-    fun defaultPriority(defaultPriority: Int): ProperltyBuilder {
-        this.defaultPriority = defaultPriority
-        return this
-    }
+    */
 
     /**
      * Add a new property [Reader].
@@ -83,7 +60,7 @@ class ProperltyBuilder internal constructor() {
      * *
      * @return
      */
-    @JvmOverloads fun add(reader: Reader, priority: Int = defaultPriority): ProperltyBuilder {
+    fun add(reader: Reader, priority: Int = Default.DEFAULT_PRIORITY): ProperltyBuilder {
         this.reader.add(reader, priority)
         return this
     }
@@ -99,14 +76,15 @@ class ProperltyBuilder internal constructor() {
 
      * If two or more [Reader]s have the same priority, the last added has the highest priority among them.
 
-     * @param resourcePath
-     * *
+     * @param resourcePath the resource path
+     * @param ignoreNotFound whether to ignore if the resource is not found. Default is false.
+     * @param charset the resource character encoding. Default is [StandardCharsets.UTF_8]
      * @param priority
      * *
      * @return
      */
-    @JvmOverloads fun add(resourcePath: String, priority: Int = defaultPriority): ProperltyBuilder {
-        return add(PropertiesResourceReader.build(resourcePath), priority)
+    fun add(resourcePath: String, ignoreNotFound: Boolean = false, charset: Charset = StandardCharsets.UTF_8, priority: Int = Default.DEFAULT_PRIORITY): ProperltyBuilder {
+        return add(PropertiesResourceReader.build(resourcePath).ignoreNotFound(ignoreNotFound).charset(charset), priority)
     }
 
     /**
@@ -120,11 +98,11 @@ class ProperltyBuilder internal constructor() {
     /**
 
      * Set the start and end placeholder delimiters.
-     * Default are [Properlty.DEFAULT_START_DELIMITER] and [Properlty.DEFAULT_END_DELIMITER]
+     * Default are [Default.START_DELIMITER] and [Default.END_DELIMITER]
 
      * @param startDelimiter the startDelimiter to set
      */
-    fun delimiters(startDelimiter: String, endDelimiter: String): ProperltyBuilder {
+    fun delimiters(startDelimiter: String = Default.START_DELIMITER, endDelimiter: String = Default.END_DELIMITER): ProperltyBuilder {
         this.startDelimiter = startDelimiter
         this.endDelimiter = endDelimiter
         return this

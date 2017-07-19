@@ -21,45 +21,21 @@ import com.ufoscout.properlty.reader.Reader;
 import com.ufoscout.properlty.reader.SystemPropertiesReader;
 import com.ufoscout.properlty.reader.decorator.PriorityQueueDecoratorReader;
 import com.ufoscout.properlty.reader.decorator.ReplacerDecoratorReader;
-import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyDecoratorReader;
+import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyReader;
 
 public class ProperltyBuilder {
 
-	private final int systemPropertiesPriority = Properlty.DEFAULT_SYSTEM_PROPERTIES_PRIORITY;
-	private final int environmentVariablesPriority = Properlty.DEFAULT_ENVIRONMENT_VARIABLES_PRIORITY;
-	private int defaultPriority = Properlty.DEFAULT_PRIORITY;
-
 	private final PriorityQueueDecoratorReader reader = new PriorityQueueDecoratorReader();
-	private String startDelimiter = Properlty.DEFAULT_START_DELIMITER;
-	private String endDelimiter = Properlty.DEFAULT_END_DELIMITER;
+	private String startDelimiter = Default.START_DELIMITER;
+	private String endDelimiter = Default.END_DELIMITER;
 	private boolean ignoreUnresolvablePlaceholders = false;
 
 	ProperltyBuilder() {
+		/*
 		reader.add(new EnvironmentVariablesReader(), environmentVariablesPriority);
-		reader.add(new ToLowerCaseAndDotKeyDecoratorReader(new EnvironmentVariablesReader()), environmentVariablesPriority);
+		reader.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()), environmentVariablesPriority);
 		reader.add(new SystemPropertiesReader(), systemPropertiesPriority);
-	}
-
-	/**
-	 * Return the default priority of readers added without explicitly
-	 * declaring the priority.
-	 * Default value is {@value Properlty#DEFAULT_PRIORITY}
-	 * @return the default priority
-	 */
-	public int getDefaultPriority() {
-		return defaultPriority;
-	}
-
-	/**
-	 * Set the defaultPriority of Readers added without explicitly
-	 * priority declaration.
-	 *
-	 * @param defaultPriority positive integer value; the higher the value the lower the priority. 0 is the highest priority.
-	 * @return
-	 */
-	public ProperltyBuilder defaultPriority(int defaultPriority) {
-		this.defaultPriority = defaultPriority;
-		return this;
+		*/
 	}
 
 	/**
@@ -70,7 +46,7 @@ public class ProperltyBuilder {
 	 * @return
 	 */
 	public ProperltyBuilder add(Reader reader) {
-		return add(reader, defaultPriority);
+		return add(reader, Default.DEFAULT_PRIORITY);
 	}
 
 	/**
@@ -96,11 +72,11 @@ public class ProperltyBuilder {
 	 *
 	 * If two or more {@link Reader}s have the same priority, the last added has the highest priority among them.
 	 *
-	 * @param reader
+	 * @param resourcePath
 	 * @return
 	 */
 	public ProperltyBuilder add(String resourcePath) {
-		return add(resourcePath, defaultPriority);
+		return add(resourcePath, Default.DEFAULT_PRIORITY);
 	}
 
 	/**
@@ -132,7 +108,7 @@ public class ProperltyBuilder {
 
 	/**
 	 * Return the end delimiter of the placeholders.
-	 * Default value is {@value Properlty#DEFAULT_END_DELIMITER}
+	 * Default value is {@value Default#END_DELIMITER}
 	 *
 	 * @return the end delimiter
 	 */
@@ -142,7 +118,7 @@ public class ProperltyBuilder {
 
 	/**
 	 * Return the start delimiter of the placeholders.
-	 * Default value is {@value Properlty#DEFAULT_START_DELIMITER}
+	 * Default value is {@value Default#START_DELIMITER}
 	 *
 	 * @return the start delimiter
 	 */
@@ -153,7 +129,7 @@ public class ProperltyBuilder {
 	/**
 	 *
 	 * Set the start and end placeholder delimiters.
-	 * Default are {@value Properlty#DEFAULT_START_DELIMITER} and {@value Properlty#DEFAULT_END_DELIMITER}
+	 * Default are {@value Default#START_DELIMITER} and {@value Default#END_DELIMITER}
 	 *
 	 * @param startDelimiter the startDelimiter to set
 	 */

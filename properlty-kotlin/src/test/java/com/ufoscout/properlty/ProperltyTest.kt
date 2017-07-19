@@ -369,7 +369,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        val values = prop.getList<Int>("key.one", { Integer.valueOf(it) })
+        val values = prop.getList<Int>(key = "key.one"){Integer.valueOf(it)}
         assertEquals(3, values.size)
         assertEquals(111, values[0])
         assertEquals(222, values[1])

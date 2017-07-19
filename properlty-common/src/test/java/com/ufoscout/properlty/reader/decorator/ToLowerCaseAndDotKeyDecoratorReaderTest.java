@@ -27,7 +27,6 @@ import org.junit.Test;
 import com.ufoscout.properlty.reader.Properties;
 import com.ufoscout.properlty.reader.PropertyValue;
 import com.ufoscout.properlty.reader.Reader;
-import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyDecoratorReader;
 
 public class ToLowerCaseAndDotKeyDecoratorReaderTest {
 
@@ -38,7 +37,7 @@ public class ToLowerCaseAndDotKeyDecoratorReaderTest {
 				.add("lower_case_key_TWO", "value2")
 				.add("lower.case.key.three", "value3");
 
-		final Map<String, PropertyValue> lowerCased = new ToLowerCaseAndDotKeyDecoratorReader(input).read();
+		final Map<String, PropertyValue> lowerCased = new ToLowerCaseAndDotKeyReader(input).read();
 
 		assertNotNull(lowerCased);
 		assertFalse(lowerCased.isEmpty());

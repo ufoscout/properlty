@@ -167,7 +167,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key, "SystemProperty");
 
 			final Properlty prop = Properlty.builder()
-					.add(Properties.add(key, "customReader"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add(key, "customReader"), Default.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -187,8 +187,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key1, value1);
 
 			final Properlty prop = Properlty.builder()
-					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
-					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Default.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -207,8 +207,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.delimiters(startDelimiter, endDelimiter)
-					.add(Properties.add("key1", "value1").add("key2", "((((key3))))__((key1))"), Properlty.HIGHEST_PRIORITY )
-					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key1", "value1").add("key2", "((((key3))))__((key1))"), Default.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -221,8 +221,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 
 			final Properlty prop = Properlty.builder()
 					.ignoreUnresolvablePlaceholders(true)
-					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
-					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Default.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY )
 					.build();
 			assertNotNull(prop);
 
@@ -233,8 +233,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	@Test(expected=UnresolvablePlaceholdersException.class)
 	public void shouldFailIfNotResolvedPlaceHolders() {
 			Properlty.builder()
-					.add(Properties.add("key2", "${${key3}}__${key1}"), Properlty.HIGHEST_PRIORITY )
-					.add(Properties.add("key3", "key1"), Properlty.HIGHEST_PRIORITY )
+					.add(Properties.add("key2", "${${key3}}__${key1}"), Default.HIGHEST_PRIORITY )
+					.add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY )
 					.build();
 	}
 

@@ -15,10 +15,9 @@
  */
 package com.ufoscout.properlty
 
-import java.util.Arrays
-import java.util.stream.Collectors
-
 import com.ufoscout.properlty.reader.PropertyValue
+import java.util.*
+import java.util.stream.Collectors
 
 class Properlty internal constructor(private val properties: Map<String, PropertyValue>) {
 
@@ -204,7 +203,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun getArray(key: String, separator: String = DEFAULT_LIST_SEPARATOR): Array<String> {
+    fun getArray(key: String, separator: String = Default.LIST_SEPARATOR): Array<String> {
         val value = properties[key]?.value
         if (value!=null) {
             return value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -213,41 +212,27 @@ class Properlty internal constructor(private val properties: Map<String, Propert
     }
 
     /**
-     * Return the property value associated with the given key split with the default separator.
-     * The default separator is [DEFAULT_LIST_SEPARATOR]
-
-     * @param key
-     * *
-     * @return
-     */
-    fun getList(key: String): List<String> {
-        return Arrays.asList(*getArray(key))
-    }
-
-    /**
      * Return the property value associated with the given key split with the specific separator.
-
+     * The default separator is [Default.LIST_SEPARATOR]
+     *
      * @param key
-     * *
      * @param separator
-     * *
      * @return
      */
-    fun getList(key: String, separator: String): List<String> {
+    fun getList(key: String, separator: String = Default.LIST_SEPARATOR): List<String> {
         return Arrays.asList(*getArray(key, separator))
     }
 
     /**
      * Return the property value associated with the given key split with the default separator
      * and apply the map function to elements in the resulting list.
-     * The default separator is [DEFAULT_LIST_SEPARATOR]
+     * The default separator is [Default.LIST_SEPARATOR]
 
      * @param key
-     * *
      * @return
      */
     fun <T> getList(key: String, map: (String) -> T): List<T> {
-        return getList(key, DEFAULT_LIST_SEPARATOR, map)
+        return getList(key, Default.LIST_SEPARATOR).stream().map(map).collect(Collectors.toList())
     }
 
     /**
@@ -255,26 +240,14 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * and apply the map function to elements in the resulting list.
 
      * @param key
-     * *
      * @param separator
-     * *
      * @return
      */
-    fun <T> getList(key: String, separator: String, map: (String) -> T): List<T> {
+    fun <T> getList(key: String, separator: String = Default.LIST_SEPARATOR, map: (String) -> T): List<T> {
         return getList(key, separator).stream().map(map).collect(Collectors.toList())
     }
 
     companion object {
-
-        val HIGHEST_PRIORITY = 0
-        val DEFAULT_SYSTEM_PROPERTIES_PRIORITY = 100
-        val DEFAULT_ENVIRONMENT_VARIABLES_PRIORITY = 1000
-        val DEFAULT_PRIORITY = 10000
-        val LOWEST_PRIORITY = Integer.MAX_VALUE
-
-        val DEFAULT_START_DELIMITER = "\${"
-        val DEFAULT_END_DELIMITER = "}"
-        val DEFAULT_LIST_SEPARATOR = ","
 
         fun builder(): ProperltyBuilder {
             return ProperltyBuilder()

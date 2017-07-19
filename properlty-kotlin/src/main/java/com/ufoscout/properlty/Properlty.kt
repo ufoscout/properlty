@@ -16,7 +16,6 @@
 package com.ufoscout.properlty
 
 import java.util.Arrays
-import java.util.Optional
 import java.util.stream.Collectors
 
 import com.ufoscout.properlty.reader.PropertyValue
@@ -30,12 +29,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    operator fun get(key: String): Optional<String> {
-        val value = properties[key]
-        if (value != null) {
-            return Optional.ofNullable(value.value)
-        }
-        return Optional.empty<String>()
+    operator fun get(key: String): String? {
+        return properties[key]?.value
     }
 
     /**
@@ -48,7 +43,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     operator fun get(key: String, defaultValue: String): String {
-        return get(key).orElse(defaultValue)
+        return get(key) ?: defaultValue
     }
 
     /**
@@ -60,8 +55,12 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    operator fun <T> get(key: String, map: (String) -> T): Optional<T> {
-        return get(key).map(map)
+    operator fun <T> get(key: String, map: (String) -> T): T? {
+        val value = properties[key]?.value
+        if (value!=null) {
+            return map(value)
+        }
+        return null;
     }
 
     /**
@@ -77,7 +76,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     operator fun <T> get(key: String, defaultValue: T, map: (String) -> T): T {
-        return get(key).map(map).orElse(defaultValue)
+        val value = get(key, map);
+        return value ?: defaultValue
     }
 
     /**
@@ -87,8 +87,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun getInt(key: String): Optional<Int> {
-        return get(key).map { Integer.parseInt(it) }
+    fun getInt(key: String): Int? {
+        return get(key, {java.lang.Integer.parseInt(it)})
     }
 
     /**
@@ -100,11 +100,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun getInt(key: String, defaultValue: Int): Int {
-        val optional = getInt(key)
-        if (optional.isPresent) {
-            return optional.get()
-        }
-        return defaultValue
+        return getInt(key) ?: defaultValue
     }
 
     /**
@@ -114,8 +110,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun getDouble(key: String): Optional<Double> {
-        return get(key).map { java.lang.Double.parseDouble(it) }
+    fun getDouble(key: String): Double? {
+        return get(key, {java.lang.Double.parseDouble(it)})
     }
 
     /**
@@ -127,11 +123,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun getDouble(key: String, defaultValue: Double): Double {
-        val optional = getDouble(key)
-        if (optional.isPresent) {
-            return optional.get()
-        }
-        return defaultValue
+        return getDouble(key) ?: defaultValue
     }
 
     /**
@@ -141,8 +133,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun getFloat(key: String): Optional<Float> {
-        return get(key).map { java.lang.Float.parseFloat(it) }
+    fun getFloat(key: String): Float? {
+        return get(key, {java.lang.Float.parseFloat(it)})
     }
 
     /**
@@ -154,11 +146,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun getFloat(key: String, defaultValue: Float): Float {
-        val optional = getFloat(key)
-        if (optional.isPresent) {
-            return optional.get()
-        }
-        return defaultValue
+        return getFloat(key) ?: defaultValue
     }
 
     /**
@@ -168,8 +156,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun getLong(key: String): Optional<Long> {
-        return get(key).map { java.lang.Long.parseLong(it) }
+    fun getLong(key: String): Long? {
+        return get(key, {java.lang.Long.parseLong(it)})
     }
 
     /**
@@ -181,11 +169,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun getLong(key: String, defaultValue: Long): Long {
-        val optional = getLong(key)
-        if (optional.isPresent) {
-            return optional.get()
-        }
-        return defaultValue
+        return getLong(key) ?: defaultValue
     }
 
     /**
@@ -195,8 +179,8 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    fun <T : Enum<T>> getEnum(key: String, type: Class<T>): Optional<T> {
-        return get(key).map<T> { value -> java.lang.Enum.valueOf<T>(type, value) }
+    fun <T : Enum<T>> getEnum(key: String, type: Class<T>): T? {
+        return get(key, {java.lang.Enum.valueOf<T>(type, it)})
     }
 
     /**
@@ -208,11 +192,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun <T : Enum<T>> getEnum(key: String, defaultValue: T): T {
-        val optional = getEnum(key, defaultValue.javaClass)
-        if (optional.isPresent) {
-            return optional.get()
-        }
-        return defaultValue
+        return getEnum(key, defaultValue.javaClass) ?: defaultValue
     }
 
     /**
@@ -224,13 +204,17 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
-    @JvmOverloads fun getArray(key: String, separator: String = DEFAULT_LIST_SEPARATOR): Array<String> {
-        return get(key).map { value -> value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }.orElse(arrayOf<String>())
+    fun getArray(key: String, separator: String = DEFAULT_LIST_SEPARATOR): Array<String> {
+        val value = properties[key]?.value
+        if (value!=null) {
+            return value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        }
+        return arrayOf<String>();
     }
 
     /**
      * Return the property value associated with the given key split with the default separator.
-     * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+     * The default separator is [DEFAULT_LIST_SEPARATOR]
 
      * @param key
      * *
@@ -256,7 +240,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
     /**
      * Return the property value associated with the given key split with the default separator
      * and apply the map function to elements in the resulting list.
-     * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
+     * The default separator is [DEFAULT_LIST_SEPARATOR]
 
      * @param key
      * *
@@ -297,11 +281,3 @@ class Properlty internal constructor(private val properties: Map<String, Propert
         }
     }
 }
-/**
- * Return the property value associated with the given key split with the default separator.
- * The default separator is {@value #DEFAULT_LIST_SEPARATOR}}
-
- * @param key
- * *
- * @return
- */

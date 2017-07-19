@@ -15,23 +15,14 @@
  */
 package com.ufoscout.properlty
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
-
-import java.io.FileNotFoundException
-import java.nio.charset.StandardCharsets
-import kotlin.collections.Map.Entry
-import java.util.UUID
-
-import org.junit.Test
-
-import com.ufoscout.properlty.Properlty
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException
 import com.ufoscout.properlty.reader.Properties
 import com.ufoscout.properlty.reader.PropertiesResourceReader
+import org.junit.Assert.*
+import org.junit.Test
+import java.io.FileNotFoundException
+import java.nio.charset.StandardCharsets
+import java.util.*
 
 class ProperltyBuilderTest : ProperltyBaseTest() {
 
@@ -47,10 +38,10 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
 
             logger.info("Checking key [{}]", key)
 
-            assertEquals(value, prop[key].get())
+            assertEquals(value, prop[key])
 
             val normalizedKey = key.toLowerCase().replace("_", ".")
-            assertTrue(prop[normalizedKey].isPresent)
+            assertNotNull(prop[normalizedKey])
         }
 
     }
@@ -76,11 +67,11 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
 
             val prop = Properlty.builder().build()
 
-            assertEquals(overriddenValue, prop[envVarKey1Normalized].get())
-            assertEquals(envVarValue1, prop[envVarKey1].get())
+            assertEquals(overriddenValue, prop[envVarKey1Normalized])
+            assertEquals(envVarValue1, prop[envVarKey1])
 
-            assertEquals(envVarValue2, prop[envVarKey2Normalized].get())
-            assertEquals(envVarValue2, prop[envVarKey2].get())
+            assertEquals(envVarValue2, prop[envVarKey2Normalized])
+            assertEquals(envVarValue2, prop[envVarKey2])
 
         } finally {
             System.clearProperty(envVarKey1Normalized)
@@ -106,8 +97,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                 .add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
                 .build()
 
-        assertEquals(envVarValue1, prop[envVarKey1Normalized].get())
-        assertEquals(customValue, prop[customKey2].get())
+        assertEquals(envVarValue1, prop[envVarKey1Normalized])
+        assertEquals(customValue, prop[customKey2])
     }
 
     @Test
@@ -122,7 +113,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                     .build()
             assertNotNull(prop)
 
-            assertTrue(prop[key].isPresent)
+            assertNotNull(prop[key])
         } finally {
             System.clearProperty(key)
         }
@@ -151,10 +142,10 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                 .build()
 
         // from file:./src/test/files/test1.properties
-        assertEquals("firstvalue", prop["keyOne"].get())
+        assertEquals("firstvalue", prop["keyOne"])
 
         // from classpath:resource1.properties AND classpath:resource2.properties
-        assertEquals("resource2", prop["name"].get())
+        assertEquals("resource2", prop["name"])
 
     }
 
@@ -170,7 +161,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                     .build()
             assertNotNull(prop)
 
-            assertEquals("customReader", prop[key].get())
+            assertEquals("customReader", prop[key])
         } finally {
             System.clearProperty(key)
         }
@@ -191,7 +182,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                     .build()
             assertNotNull(prop)
 
-            assertEquals(value1 + "__" + value1, prop["key2"].get())
+            assertEquals(value1 + "__" + value1, prop["key2"])
         } finally {
             System.clearProperty(key1)
         }
@@ -211,7 +202,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                 .build()
         assertNotNull(prop)
 
-        assertEquals("value1__value1", prop["key2"].get())
+        assertEquals("value1__value1", prop["key2"])
 
     }
 
@@ -225,7 +216,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                 .build()
         assertNotNull(prop)
 
-        assertEquals("\${key1}__\${key1}", prop["key2"].get())
+        assertEquals("\${key1}__\${key1}", prop["key2"])
 
     }
 

@@ -17,7 +17,7 @@ package com.ufoscout.properlty
 
 import com.ufoscout.properlty.reader.PropertyValue
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.util.*
 import java.util.stream.Collectors
@@ -33,7 +33,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop["key.three"].isPresent)
+        assertNull(prop["key.three"])
     }
 
     @Test
@@ -45,8 +45,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals("value.one", prop["key.one"].get())
-        assertEquals("value.two", prop["key.two"].get())
+        assertEquals("value.one", prop.get("key.one"))
+        assertEquals("value.two", prop["key.two"])
     }
 
     @Test
@@ -70,7 +70,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop.getInt("key.three").isPresent)
+        assertNull(prop.getInt("key.three"))
     }
 
 
@@ -83,8 +83,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(123, prop.getInt("key.one").get().toInt().toLong())
-        assertEquals(1000000, prop.getInt("key.two").get().toInt().toLong())
+        assertEquals(123, prop.getInt("key.one"))
+        assertEquals(1000000, prop.getInt("key.two"))
     }
 
     @Test
@@ -95,8 +95,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(1, prop.getInt("key.one", 10).toLong())
-        assertEquals(10, prop.getInt("key.two", 10).toLong())
+        assertEquals(1, prop.getInt("key.one", 10))
+        assertEquals(10, prop.getInt("key.two", 10))
 
     }
 
@@ -121,7 +121,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop.getDouble("key.three").isPresent)
+        assertNull(prop.getDouble("key.three"))
     }
 
 
@@ -134,8 +134,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(123.0, prop.getDouble("key.one").get().toDouble(), 0.1)
-        assertEquals(1000000.0, prop.getDouble("key.two").get().toDouble(), 0.1)
+        assertEquals(123.0, prop.getDouble("key.one")!!, 0.1)
+        assertEquals(1000000.0, prop.getDouble("key.two")!!, 0.1)
     }
 
     @Test
@@ -172,7 +172,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop.getFloat("key.three").isPresent)
+        assertNull(prop.getFloat("key.three"))
     }
 
 
@@ -185,8 +185,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(123f, prop.getFloat("key.one").get().toFloat(), 0.1f)
-        assertEquals(1000000f, prop.getFloat("key.two").get().toFloat(), 0.1f)
+        assertEquals(123f, prop.getFloat("key.one")!!, 0.1f)
+        assertEquals(1000000f, prop.getFloat("key.two")!!, 0.1f)
     }
 
     @Test
@@ -223,7 +223,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop.getLong("key.three").isPresent)
+        assertNull(prop.getLong("key.three"))
     }
 
 
@@ -236,8 +236,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(123L, prop.getLong("key.one").get().toLong())
-        assertEquals(1000000L, prop.getLong("key.two").get().toLong())
+        assertEquals(123L, prop.getLong("key.one"))
+        assertEquals(1000000L, prop.getLong("key.two"))
     }
 
     @Test
@@ -274,7 +274,7 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertFalse(prop.getEnum("key.three", NeedSomebodyToLove::class.java).isPresent)
+        assertNull(prop.getEnum("key.three", NeedSomebodyToLove::class.java))
     }
 
 
@@ -287,8 +287,8 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove::class.java).get())
-        assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove::class.java).get())
+        assertEquals(NeedSomebodyToLove.ME, prop.getEnum("key.one", NeedSomebodyToLove::class.java))
+        assertEquals(NeedSomebodyToLove.THEM, prop.getEnum("key.two", NeedSomebodyToLove::class.java))
     }
 
     @Test
@@ -324,9 +324,9 @@ class ProperltyTest : ProperltyBaseTest() {
 
         val prop = buildProperlty(properties)
 
-        assertEquals(111, prop.get<Int>("key.one", { Integer.valueOf(it) }).get().toInt().toLong())
-        assertEquals(222, prop["key.two", 222, { Integer.valueOf(it) }].toInt().toLong())
-        assertFalse(prop.get<Int>("key.three", { Integer.valueOf(it) }).isPresent)
+        assertEquals(111, prop.get<Int>("key.one", { Integer.valueOf(it) }))
+        assertEquals(222, prop["key.two", 222, { Integer.valueOf(it) }])
+        assertNull(prop.get<Int>("key.three", { Integer.valueOf(it) }))
     }
 
     @Test
@@ -338,11 +338,11 @@ class ProperltyTest : ProperltyBaseTest() {
         val prop = buildProperlty(properties)
 
         val values = prop.getArray("key.one")
-        assertEquals(3, values.size.toLong())
+        assertEquals(3, values.size)
         assertEquals("111", values[0])
         assertEquals("AAAAA", values[1])
         assertEquals("BBB", values[2])
-        assertEquals(0, prop.getArray("key.three").size.toLong())
+        assertEquals(0, prop.getArray("key.three").size)
     }
 
     @Test
@@ -354,11 +354,11 @@ class ProperltyTest : ProperltyBaseTest() {
         val prop = buildProperlty(properties)
 
         val values = prop.getList("key.one")
-        assertEquals(3, values.size.toLong())
+        assertEquals(3, values.size)
         assertEquals("111", values[0])
         assertEquals("AAAAA", values[1])
         assertEquals("BBB", values[2])
-        assertEquals(0, prop.getList("key.three").size.toLong())
+        assertEquals(0, prop.getList("key.three").size)
     }
 
     @Test
@@ -370,11 +370,11 @@ class ProperltyTest : ProperltyBaseTest() {
         val prop = buildProperlty(properties)
 
         val values = prop.getList<Int>("key.one", { Integer.valueOf(it) })
-        assertEquals(3, values.size.toLong())
-        assertEquals(111, values[0].toInt().toLong())
-        assertEquals(222, values[1].toInt().toLong())
-        assertEquals(333, values[2].toInt().toLong())
-        assertEquals(0, prop.getList<Int>("key.three", { Integer.valueOf(it) }).size.toLong())
+        assertEquals(3, values.size)
+        assertEquals(111, values[0])
+        assertEquals(222, values[1])
+        assertEquals(333, values[2])
+        assertEquals(0, prop.getList<Int>("key.three", { Integer.valueOf(it) }).size)
     }
 
     private fun buildProperlty(properties: Map<String, String>): Properlty {

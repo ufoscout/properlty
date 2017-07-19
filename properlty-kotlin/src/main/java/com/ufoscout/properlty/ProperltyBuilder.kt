@@ -27,10 +27,11 @@ class ProperltyBuilder internal constructor() {
 
     private val systemPropertiesPriority = Properlty.DEFAULT_SYSTEM_PROPERTIES_PRIORITY
     private val environmentVariablesPriority = Properlty.DEFAULT_ENVIRONMENT_VARIABLES_PRIORITY
+
     /**
      * Return the default priority of readers added without explicitly
      * declaring the priority.
-     * Default value is {@value Properlty#DEFAULT_PRIORITY}
+     * Default value is [Properlty.DEFAULT_PRIORITY]
      * @return the default priority
      */
     var defaultPriority = Properlty.DEFAULT_PRIORITY
@@ -39,7 +40,7 @@ class ProperltyBuilder internal constructor() {
     private val reader = PriorityQueueDecoratorReader()
     /**
      * Return the start delimiter of the placeholders.
-     * Default value is {@value Properlty#DEFAULT_START_DELIMITER}
+     * Default value is [Properlty.DEFAULT_START_DELIMITER]
 
      * @return the start delimiter
      */
@@ -47,7 +48,7 @@ class ProperltyBuilder internal constructor() {
         private set
     /**
      * Return the end delimiter of the placeholders.
-     * Default value is {@value Properlty#DEFAULT_END_DELIMITER}
+     * Default value is [Properlty.DEFAULT_END_DELIMITER]
 
      * @return the end delimiter
      */
@@ -119,7 +120,7 @@ class ProperltyBuilder internal constructor() {
     /**
 
      * Set the start and end placeholder delimiters.
-     * Default are {@value Properlty#DEFAULT_START_DELIMITER} and {@value Properlty#DEFAULT_END_DELIMITER}
+     * Default are [Properlty.DEFAULT_START_DELIMITER] and [Properlty.DEFAULT_END_DELIMITER]
 
      * @param startDelimiter the startDelimiter to set
      */
@@ -143,26 +144,3 @@ class ProperltyBuilder internal constructor() {
     }
 
 }
-/**
- * Add a new property [Reader] with the default priority.
- * If two or more [Reader]s have the same priority, the last added has the highest priority among them.
-
- * @param reader
- * *
- * @return
- */
-/**
- * Add a new [PropertiesResourceReader] to fetch the properties from the a specific resource on the file system
- * or on the classpath.
- * The resourcePath can be in the form:
-
- * - ./path/file : path of a file in the file system
- * - file:./path/file : same as previous case, a path of a file in the file system
- * - classpath:/path/file : path of a resource in the classpath
-
- * If two or more [Reader]s have the same priority, the last added has the highest priority among them.
-
- * @param reader
- * *
- * @return
- */

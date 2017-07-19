@@ -16,8 +16,10 @@
 package com.ufoscout.properlty
 
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException
+import com.ufoscout.properlty.reader.EnvironmentVariablesReader
 import com.ufoscout.properlty.reader.Properties
 import com.ufoscout.properlty.reader.SystemPropertiesReader
+import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyReader
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.FileNotFoundException
@@ -32,7 +34,10 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
         val envVar = System.getenv()
         assertFalse(envVar.isEmpty())
 
-        val prop = Properlty.builder().build()
+        val prop = Properlty.builder()
+                .add(EnvironmentVariablesReader())
+                .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+                .build()
 
         for ((key, value) in envVar) {
 
@@ -65,7 +70,11 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             val overriddenValue = UUID.randomUUID().toString()
             System.setProperty(envVarKey1Normalized, overriddenValue)
 
-            val prop = Properlty.builder().build()
+            val prop = Properlty.builder()
+                    .add(SystemPropertiesReader())
+                    .add(EnvironmentVariablesReader())
+                    .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+                    .build()
 
             assertEquals(overriddenValue, prop[envVarKey1Normalized])
             assertEquals(envVarValue1, prop[envVarKey1])
@@ -94,6 +103,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
         val customKey2 = UUID.randomUUID().toString()
 
         val prop = Properlty.builder()
+                .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
                 .add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
                 .build()
 
@@ -105,19 +115,13 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
     fun shouldIgnoreFileNotFound() {
 
         val key = UUID.randomUUID().toString()
-        try {
-            System.setProperty(key, key)
+        val prop = Properlty.builder()
+                .add(Properties.add(key, "value"))
+                .add("NOT VALID PATH", true, StandardCharsets.UTF_8)
+                .build()
+        assertNotNull(prop)
 
-            val prop = Properlty.builder()
-                    .add(SystemPropertiesReader())
-                    .add("NOT VALID PATH", true, StandardCharsets.UTF_8)
-                    .build()
-            assertNotNull(prop)
-
-            assertNotNull(prop[key])
-        } finally {
-            System.clearProperty(key)
-        }
+        assertNotNull(prop[key])
 
     }
 
@@ -178,6 +182,7 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             System.setProperty(key1, value1)
 
             val prop = Properlty.builder()
+                    .add(SystemPropertiesReader())
                     .add(Properties.add("key2", "\${\${key3}}__\${key1}"), Default.HIGHEST_PRIORITY)
                     .add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY)
                     .build()

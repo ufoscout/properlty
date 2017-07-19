@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.ufoscout.properlty.reader.EnvironmentVariablesReader;
+import com.ufoscout.properlty.reader.SystemPropertiesReader;
+import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyReader;
 import org.junit.Test;
 
 import com.ufoscout.properlty.exception.UnresolvablePlaceholdersException;
@@ -41,7 +44,10 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final Map<String, String> envVar = System.getenv();
 		assertFalse(envVar.isEmpty());
 
-		final Properlty prop = Properlty.builder().build();
+		final Properlty prop = Properlty.builder()
+				.add(new EnvironmentVariablesReader())
+				.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
+				.build();
 
 		for (final Entry<String, String> envEntry : envVar.entrySet()) {
 
@@ -76,7 +82,11 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			final String overriddenValue = UUID.randomUUID().toString();
 			System.setProperty(envVarKey1Normalized, overriddenValue);
 
-			final Properlty prop = Properlty.builder().build();
+			final Properlty prop = Properlty.builder()
+					.add(new SystemPropertiesReader())
+					.add(new EnvironmentVariablesReader())
+					.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
+					.build();
 
 			assertEquals(overriddenValue, prop.get(envVarKey1Normalized).get());
 			assertEquals(envVarValue1, prop.get(envVarKey1).get());
@@ -105,6 +115,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final String customKey2 = UUID.randomUUID().toString();
 
 		final Properlty prop = Properlty.builder()
+				.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
 				.add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
 				.build();
 
@@ -116,18 +127,13 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	public void shouldIgnoreFileNotFound() {
 
 		final String key = UUID.randomUUID().toString();
-		try {
-			System.setProperty(key, key);
+		final Properlty prop = Properlty.builder()
+				.add(Properties.add(key, "value"))
+				.add(PropertiesResourceReader.build("NOT VALID PATH").ignoreNotFound(true).charset(StandardCharsets.UTF_8))
+				.build();
+		assertNotNull(prop);
 
-			final Properlty prop = Properlty.builder()
-					.add(PropertiesResourceReader.build("NOT VALID PATH").ignoreNotFound(true).charset(StandardCharsets.UTF_8))
-					.build();
-			assertNotNull(prop);
-
-			assertTrue(prop.get(key).isPresent());
-		} finally {
-			System.clearProperty(key);
-		}
+		assertTrue(prop.get(key).isPresent());
 
 	}
 
@@ -187,6 +193,7 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(key1, value1);
 
 			final Properlty prop = Properlty.builder()
+					.add(new SystemPropertiesReader())
 					.add(Properties.add("key2", "${${key3}}__${key1}"), Default.HIGHEST_PRIORITY )
 					.add(Properties.add("key3", "key1"), Default.HIGHEST_PRIORITY )
 					.build();

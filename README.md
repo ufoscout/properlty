@@ -1,19 +1,19 @@
 # Properlty - Simple configuration library with placeholders resolution and no magic!
 
 Properlty provides a simple way to configure an application from multiple sources — built in resources, system
-properties, property files, environment variables, and whatever else you like. Like many 
+properties, property files, environment variables, and whatever else you like.
 
 Some features:
 
 - Recursive placeholders resolution
 - Only 30Kb and no external dependencies
-- Java and a Kotlin versions
+- Java and Kotlin versions
 
 
 Getting Started
 ---------------
 
-To get started, add Properlty dependency to your project.
+1. To get started, add Properlty dependency to your project.
  
 For Kotlin:
 ```xml
@@ -33,7 +33,7 @@ For Java:
 		</dependency>
 ```
 
-1. Define some properties. You can use placeholders, for example, in `config.properties`:
+2. Define some properties. You can use placeholders, for example, in `config.properties`:
 
 ```properties
     server.port=9090
@@ -41,34 +41,39 @@ For Java:
     server.url=http://${server.host}:${server.port}/
 ```
     
-2. Build a Properlty object that loads properties:
+3. Build a Properlty object that loads properties:
 
+Kotlin:
 ```kotlin
         val properlty = Properlty.builder()
                 .add("classpath:config.properties") // loads config.properties from the classpath
                 .build()
 ```
     
+Java:
 ```java
    		final Properlty properlty = Properlty.builder()
 				.add("classpath:classpath:config.properties")  // loads config.properties from the classpath
 				.build();
 ```
 
-3. Look up properties by key:
+4. Look up properties by key:
 
+Kotlin:
 ```kotlin
     val port: Int = properlty.getInt("server.port", 8080); // returns 9090
     val serverUrl = properlty["server.url"] // returns http://127.0.0.1:9090/
     val defaultVal = properlty["unknownKey", "defaultValue"] // returns defaultValue
 ```
 
+Java:
 ```java
     int port = properlty.getInt("server.port", 8080); // returns 9090
     String serverUrl = properlty.get("server.url") // returns http://127.0.0.1:9090/
     String defaultVal = properlty.get("unknownKey", "defaultValue") // returns defaultValue
 ```
 
+(All examples are in Kotlin from now on, btw Java code is exactly the same)
 
 Readers
 -------
@@ -163,7 +168,7 @@ The deafult priority is 100. The highest priority is 0.
 
 Real life example
 -----------------
-A typical real life configuration would look like (in Kotlin, Java is exactly the same):
+A typical real life configuration would look like:
 
 ```kotlin
         val properlty = Properlty.builder()

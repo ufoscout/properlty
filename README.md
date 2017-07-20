@@ -69,7 +69,10 @@ Kotlin:
 Java:
 ```java
     int port = properlty.getInt("server.port", 8080); // returns 9090
-    String serverUrl = properlty.get("server.url") // returns http://127.0.0.1:9090/
+    
+    // the Java API uses Optional for methods that could not produce a valid result.
+    // In this case the Optional contains the Strind 'http://127.0.0.1:9090/' 
+    Optional<String> serverUrl = properlty.get("server.url") 
     String defaultVal = properlty.get("unknownKey", "defaultValue") // returns defaultValue
 ```
 

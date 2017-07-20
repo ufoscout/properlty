@@ -216,7 +216,7 @@ Some examples:
             .add("classpath:test.properties")
             .build()
 
-    // get a String. "defaultValue" is returned if the key "string.key" is not found
+    // get a String. "defaultValue" is returned if the key is not found
     val oneString = properlty["key", "defaultValue"]
 
     // get an array from the comma separated tokens of the property value

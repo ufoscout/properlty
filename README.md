@@ -20,7 +20,7 @@ For Kotlin:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty-kotlin</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0</version>
     </dependency>
 ```
 
@@ -29,9 +29,11 @@ For Java:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0</version>
     </dependency>
 ```
+
+**_WARN: use one OR the other. Do not import both the dependencies!_**
 
 2. Define some properties. You can use placeholders, for example, in `config.properties`:
 
@@ -76,7 +78,7 @@ Java:
     String defaultVal = properlty.get("unknownKey", "defaultValue") // returns defaultValue
 ```
 
-(All examples are in Kotlin from now on, btw Java code is exactly the same)
+(All examples are in Kotlin from now on; btw, Java code is exactly the same)
 
 Readers
 -------
@@ -126,9 +128,10 @@ By default `${` and `}` delimiters are used. Custom delimiters can be easily def
 ```
 
 
-Readers priority
-----------------
-Readers are evaluated in the order they are added. So in case of key conflicts, the first added has the highest priority.
+Readers priority -> Last one wins
+---------------------------------
+Properties defined in later readers will override properties defined earlier readers, in case of overlapping keys. 
+Hence, make sure that the most specific readers are the last ones in the given list of locations.
 
 For example:
 
@@ -144,33 +147,35 @@ fileTwo.properties:
 
 ```kotlin
     val properlty = Properlty.builder()
-            .add(SystemPropertiesReader()) // loads the Java system properties
             .add("classpath:fileOne.properties") // loads from the classpath
             .add("file:./fileTwo.properties") // loads from the file system
+            .add(SystemPropertiesReader()) // loads the Java system properties
             .build()
     
-    // this prints 'urlFromOne'
+    // this prints 'urlFromTwo'
     println(properlty["server.url"])
 ```
 
-BTW, due to the fact that we used `SystemPropertiesReader()` before the file readers, if the "server.url" system property is specified at runtime, it will override the other values.
+BTW, due to the fact that we used `SystemPropertiesReader()` as last reader, if the "server.url" system property is specified at runtime, it will override the other values.
 
 In addition, it is possible to specify a custom priority:
 
 ```kotlin
     val properlty = Properlty.builder()
-            .add(SystemPropertiesReader()) // loads the Java system properties
-            .add("classpath:fileOne.properties") // loads from the classpath
-            
+
             // load the properties from the file system and specify their priority
-            .add(resourcePath = "file:./fileTwo.properties", priority = Default.HIGHEST_PRIORITY) 
+            .add(resourcePath = "file:./fileTwo.properties", priority = Default.HIGHEST_PRIORITY)
+            
+            .add("classpath:fileOne.properties") // loads from the classpath
+            .add(SystemPropertiesReader()) // loads the Java system properties            
             .build()
             
     // this prints 'urlFromTwo'
     println(properlty["server.url"]) 
 ```
 
-The deafult priority is 100. The highest priority is 0.
+The default priority is 100. The highest priority is 0. 
+As usual, when more readers have the same priority, the last one wins in case of overlapping keys. 
 
 
 Real life example
@@ -180,26 +185,26 @@ A typical real life configuration would look like:
 ```kotlin
     val properlty = Properlty.builder()
     
-            // Add a not mandatory reader, resource not found exceptions are ignored.
-            // Here I am adding properties present only during testing.
-            .add(resourcePath = "classpath:test.properties", ignoreNotFound = true)
-                                                                       
-             // Load the Java system properties                                          
-            .add(SystemPropertiesReader())
-            
              // Load the Environment variables
-            .add(EnvironmentVariablesReader())
-            
+            .add(EnvironmentVariablesReader(), priority = Default.HIGHEST_PRIORITY)
+
              // load the Environment variables and convert their keys 
              // from JAVA_HOME=XXX to java.home=XXX
              // This could be desired to override default properties
-            .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+            .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()), priority = Default.HIGHEST_PRIORITY)
+            
+             // Load the Java system properties. They overrides the Environment variables.
+            .add(SystemPropertiesReader(), priority = Default.HIGHEST_PRIORITY)
             
             // load a resource from the classpath
             .add("classpath:default.properties")
             
              // load a file the file system
             .add("file:./config/config.properties")
+            
+            // Add a not mandatory reader, resource not found exceptions are ignored.
+            // Here I am adding properties present only during testing.
+            .add(resourcePath = "classpath:test.properties", ignoreNotFound = true)
             
             // build the properlty object 
             .build()
@@ -217,18 +222,18 @@ Some examples:
             .build()
 
     // get a String. "defaultValue" is returned if the key is not found
-    val oneString = properlty["key", "defaultValue"]
+    val aString = properlty["key", "defaultValue"]
 
     // get an array from the comma separated tokens of the property value
-    val oneArray = properlty.getArray("key", ",")
+    val anArray = properlty.getArray("key", ",")
 
     // get an Enum
-    val oneEnum = properlty.getEnum<NeedSomebodyToLove>("key")
+    val anEnum = properlty.getEnum<NeedSomebodyToLoveEnum>("key")
 
     // get a BigDecimal by applying a transformation function to the returned String value
-    val oneBigDecimal = properlty["key", { BigDecimal(it) }]
+    val aBigDecimal = properlty["key", { BigDecimal(it) }]
 
     // get a list of BigDecimal. The property value is split in tokens using the default list 
     // separator (a comma) then the transformation function is applied to each token
-    val oneListOfBigDecimals = properlty.getList("key") {BigDecimal(it)} 
+    val aListOfBigDecimals = properlty.getList("key") {BigDecimal(it)} 
 ```

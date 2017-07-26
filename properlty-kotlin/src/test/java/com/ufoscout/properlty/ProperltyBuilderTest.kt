@@ -69,9 +69,9 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
             System.setProperty(envVarKey1Normalized, overriddenValue)
 
             val prop = Properlty.builder()
-                    .add(SystemPropertiesReader())
                     .add(EnvironmentVariablesReader())
                     .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+                    .add(SystemPropertiesReader())
                     .build()
 
             assertEquals(overriddenValue, prop[envVarKey1Normalized])
@@ -101,8 +101,8 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
         val customKey2 = UUID.randomUUID().toString()
 
         val prop = Properlty.builder()
-                .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
                 .add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
+                .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
                 .build()
 
         assertEquals(envVarValue1, prop[envVarKey1Normalized])
@@ -139,9 +139,9 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
     @Test
     fun shouldConsiderFileAddPriority() {
         val prop = Properlty.builder()
-                .add("classpath:inner/resource2.properties")
-                .add("classpath:resource1.properties")
                 .add("file:./src/test/files/test1.properties")
+                .add("classpath:resource1.properties")
+                .add("classpath:inner/resource2.properties")
                 .build()
 
         // from file:./src/test/files/test1.properties

@@ -82,9 +82,9 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 			System.setProperty(envVarKey1Normalized, overriddenValue);
 
 			final Properlty prop = Properlty.builder()
-					.add(new SystemPropertiesReader())
 					.add(new EnvironmentVariablesReader())
 					.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
+					.add(new SystemPropertiesReader())
 					.build();
 
 			assertEquals(overriddenValue, prop.get(envVarKey1Normalized).get());
@@ -114,8 +114,8 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 		final String customKey2 = UUID.randomUUID().toString();
 
 		final Properlty prop = Properlty.builder()
-				.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
 				.add(Properties.add(envVarKey1Normalized, customValue).add(customKey2, customValue))
+				.add(new ToLowerCaseAndDotKeyReader(new EnvironmentVariablesReader()))
 				.build();
 
 		assertEquals(envVarValue1, prop.get(envVarKey1Normalized).get());
@@ -151,9 +151,9 @@ public class ProperltyBuilderTest extends ProperltyBaseTest {
 	@Test
 	public void shouldConsiderFileAddPriority() {
 		final Properlty prop = Properlty.builder()
-					.add("classpath:inner/resource2.properties")
-					.add("classpath:resource1.properties")
 					.add("file:./src/test/files/test1.properties")
+					.add("classpath:resource1.properties")
+					.add("classpath:inner/resource2.properties")
 					.build();
 
 		// from file:./src/test/files/test1.properties

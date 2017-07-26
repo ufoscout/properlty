@@ -4,7 +4,7 @@
 
     <groupId>com.ufoscout.properlty</groupId>
     <artifactId>properlty-parent</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>properlty</name>
@@ -162,7 +162,7 @@
     <scm>
         <connection>scm:git:ssh://github.com/ufoscout/properlty.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/ufoscout/properlty.git</developerConnection>
-        <tag>1.4.0</tag>
+        <tag>HEAD</tag>
         <url>http://github.com/ufoscout/properlty</url>
     </scm>
     <distributionManagement>

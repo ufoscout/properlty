@@ -20,7 +20,7 @@ For Kotlin:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty-kotlin</artifactId>
-        <version>1.4.0</version>
+        <version>1.6.0</version>
     </dependency>
 ```
 
@@ -29,7 +29,7 @@ For Java:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty</artifactId>
-        <version>1.4.0</version>
+        <version>1.6.0</version>
     </dependency>
 ```
 
@@ -126,6 +126,23 @@ By default `${` and `}` delimiters are used. Custom delimiters can be easily def
             .delimiters("%(", ")") // using %( and ) as delimiters
             .add( bla bla bla)
 ```
+
+Default Values
+--------------
+Placeholders can have default values which are used if the key is not otherwise provided. Example:
+
+config.properties:
+```properties
+# the default value "8080" is used if 'PORT_NUMBER' is not provided
+server.port=${PORT_NUMBER:8080}
+    
+# default is 127.0.0.1
+server.ip=${IP:127.0.0.1}
+
+server.url=${server.ip}/${server.port}
+```
+
+The default separator for the default value is ":". A custom value can be set through the 'defaultValueSeparator()' method of Properlty.builder().
 
 
 Readers priority -> Last one wins

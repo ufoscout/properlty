@@ -74,7 +74,7 @@ public class PropertiesResourceReaderTest extends ProperltyBaseTest {
 			final String path = "./src/test/files/test1.properties";
 			final Map<String, PropertyValue> properties = PropertiesResourceReader.build(path).ignoreNotFound(ignoreNotFound).read();
 			assertNotNull(properties);
-			assertFalse(properties.isEmpty());
+			assertEquals(2, properties.size());
 
 			assertTrue(properties.containsKey("keyOne"));
 			assertEquals("firstvalue", properties.get("keyOne").getValue());

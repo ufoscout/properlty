@@ -44,9 +44,9 @@ public final class StringUtils {
 	 * endDelimiter = "}"
 	 *
 	 * - input = "abdc" -> empty {@link Optional}
-	 * - input = "${abdc}" -> "abcd"
-	 * - input = "${${${abdc}}}" -> "abcd"
-	 * - input = "aaa${abdc}aaa${efgh}" -> "abcd"
+	 * - input = "${abcd}" -> "abcd"
+	 * - input = "${${${abcd}}}" -> "abcd"
+	 * - input = "aaa${abcd}aaa${efgh}" -> "abcd"
 	 *
 	 * @param input
 	 * @param startDelimiter
@@ -75,10 +75,10 @@ public final class StringUtils {
 	 * startDelimiter = "${"
 	 * endDelimiter = "}"
 	 *
-	 * - input = "abdc" -> {}
-	 * - input = "${abdc}" -> {"abcd"}
-	 * - input = "${${${abdc}}}" -> {"abcd"}
-	 * - input = "aaa${abdc}aaa${efgh}" -> {"abcd","efgh"}
+	 * - input = "abcd" -> {}
+	 * - input = "${abcd}" -> {"abcd"}
+	 * - input = "${${${abcd}}}" -> {"abcd"}
+	 * - input = "aaa${abcd}aaa${efgh}" -> {"abcd","efgh"}
 	 *
 	 * @param input
 	 * @param startDelimiter
@@ -108,10 +108,10 @@ public final class StringUtils {
 	 * endDelimiter = "}"
 	 * distinc = true
 	 *
-	 * - input = "abdc" -> {}
-	 * - input = "${abdc}" -> {"abcd"}
-	 * - input = "${${${abdc}${abdc}}}" -> {"abcd"}
-	 * - input = "__${abdc}__${efgh}__${abdc}" -> {"abcd","efgh"}
+	 * - input = "abcd" -> {}
+	 * - input = "${abcd}" -> {"abcd"}
+	 * - input = "${${${abcd}${abcd}}}" -> {"abcd"}
+	 * - input = "__${abcd}__${efgh}__${abcd}" -> {"abcd","efgh"}
 	 *
 	 * @param input
 	 * @param startDelimiter

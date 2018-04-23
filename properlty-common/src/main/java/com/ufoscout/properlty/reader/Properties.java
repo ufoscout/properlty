@@ -23,12 +23,12 @@ package com.ufoscout.properlty.reader;
  */
 public class Properties {
 
-	public static ProprammaticPropertiesReader add(String key, String value) {
-		return new ProprammaticPropertiesReader().add(key, value);
+	public static ProgrammaticPropertiesReader add(String key, String value) {
+		return new ProgrammaticPropertiesReader().add(key, value);
 	}
 
-	public static ProprammaticPropertiesReader add(String key, PropertyValue value) {
-		return new ProprammaticPropertiesReader().add(key, value);
+	public static ProgrammaticPropertiesReader add(String key, PropertyValue value) {
+		return new ProgrammaticPropertiesReader().add(key, value);
 	}
 
 }

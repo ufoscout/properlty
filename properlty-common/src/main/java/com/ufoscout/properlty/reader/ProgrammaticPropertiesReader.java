@@ -24,11 +24,11 @@ import java.util.Map;
  * @author Francesco Cina
  *
  */
-public class ProprammaticPropertiesReader implements Reader {
+public class ProgrammaticPropertiesReader implements Reader {
 
 	private final Map<String, PropertyValue> properties = new HashMap<>();
 
-	ProprammaticPropertiesReader() {}
+	ProgrammaticPropertiesReader() {}
 
 	@Override
 	public Map<String, PropertyValue> read() {
@@ -42,7 +42,7 @@ public class ProprammaticPropertiesReader implements Reader {
 	 * @param value
 	 * @return
 	 */
-	public ProprammaticPropertiesReader add(String key, String value) {
+	public ProgrammaticPropertiesReader add(String key, String value) {
 		properties.put(key, PropertyValue.of(value));
 		return this;
 	}
@@ -54,7 +54,7 @@ public class ProprammaticPropertiesReader implements Reader {
 	 * @param value
 	 * @return
 	 */
-	public ProprammaticPropertiesReader add(String key, PropertyValue value) {
+	public ProgrammaticPropertiesReader add(String key, PropertyValue value) {
 		properties.put(key, value);
 		return this;
 	}

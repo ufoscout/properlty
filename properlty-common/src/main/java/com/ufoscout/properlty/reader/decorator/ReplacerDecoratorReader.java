@@ -37,12 +37,14 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 
 	private final String startDelimiter;
 	private final String endDelimiter;
+	private final String defaultValueSeparator;
 	private final boolean ignoreUnresolvablePlaceholders;
 
-	public ReplacerDecoratorReader(Reader reader, String startDelimiter, String endDelimiter, boolean ignoreUnresolvablePlaceholders) {
+	public ReplacerDecoratorReader(Reader reader, String startDelimiter, String endDelimiter, String defaultValueSeparator, boolean ignoreUnresolvablePlaceholders) {
 		super(reader);
 		this.startDelimiter = startDelimiter;
 		this.endDelimiter = endDelimiter;
+		this.defaultValueSeparator = defaultValueSeparator;
 		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
 	}
 
@@ -50,7 +52,7 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 	protected Map<String, PropertyValue> apply(Map<String, PropertyValue> input) {
 		final Map<String, PropertyValue> output = new LinkedHashMap<>(input);
 
-		final Map<String, PropertyValue> valuesToBeReplacedMap = new LinkedHashMap<>(input);
+		final Map<String, PropertyValue> valuesToBeReplacedMap = new LinkedHashMap<>();
 		boolean valuesToBeReplaced = true;
 		boolean valuesReplacedOnLastLoop = true;
 
@@ -65,28 +67,32 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 
 				if (value.isResolvable()) {
 
-				final List<String> tokens = StringUtils.allTokens(value.getValue(), startDelimiter, endDelimiter, true);
+					final List<String> tokens = StringUtils.allTokens(value.getValue(), startDelimiter, endDelimiter, true);
 
-				if (!tokens.isEmpty()) {
-					valuesToBeReplaced = true;
-					valuesToBeReplacedMap.put(key, value);
-				}
+					if (!tokens.isEmpty()) {
+						valuesToBeReplaced = true;
+						valuesToBeReplacedMap.put(key, value);
+					}
 
-				for (final String token : tokens) {
-					if (output.containsKey(token)) {
-						final PropertyValue tokenValue = output.get(token);
-						if (!StringUtils.hasTokens(tokenValue.getValue(), startDelimiter, endDelimiter)) {
-							value.value( value.getValue().replace(startDelimiter + token + endDelimiter, tokenValue.getValue()) );
+					for (final String token : tokens) {
+						final PropertyValue tokenValue = output.get(getBaseValue(token, defaultValueSeparator));
+						if (tokenValue!=null) {
+							if (!StringUtils.hasTokens(tokenValue.getValue(), startDelimiter, endDelimiter)) {
+								value.value( value.getValue().replace(startDelimiter + token + endDelimiter, tokenValue.getValue()) );
+								valuesReplacedOnLastLoop = true;
+							}
+						} else if (hasDefaultValue(token, defaultValueSeparator)) {
+							value.value( getDefaultValue(token, defaultValueSeparator) );
+							output.put(key, value);
 							valuesReplacedOnLastLoop = true;
 						}
-					}
-				};
+					};
 
-			}
+				}
 			};
 		}
 
-		if (valuesToBeReplaced && !ignoreUnresolvablePlaceholders) {
+		if (!valuesToBeReplacedMap.isEmpty() && !ignoreUnresolvablePlaceholders) {
 
 			final StringBuilder message = new StringBuilder("Unresolvable placeholders: \n");
 			valuesToBeReplacedMap.forEach((key, value) -> {
@@ -101,6 +107,26 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 		}
 
 		return output;
+	}
+
+	private boolean hasDefaultValue(String token, String defaultValueSeparator) {
+		return token.indexOf(defaultValueSeparator) >= 0;
+	}
+
+	private String getBaseValue(String token, String defaultValueSeparator) {
+		int index = token.indexOf(defaultValueSeparator);
+		if (index >= 0) {
+			return token.substring(0, index);
+		}
+		return token;
+	}
+
+	private String getDefaultValue(String token, String defaultValueSeparator) {
+		int index = token.indexOf(defaultValueSeparator);
+		if (index >= 0) {
+			return token.substring(index+1);
+		}
+		return "";
 	}
 
 }

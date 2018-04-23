@@ -11,4 +11,5 @@ public interface Default {
 
     String LIST_SEPARATOR = ",";
 
+    String DEFAULT_DEFAULT_VALUE_SEPARATOR = ":";
 }

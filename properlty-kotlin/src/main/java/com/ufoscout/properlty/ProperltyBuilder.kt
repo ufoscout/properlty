@@ -42,6 +42,15 @@ class ProperltyBuilder internal constructor() {
     var endDelimiter = Default.END_DELIMITER
         private set
 
+    /**
+     * Set the separator for the default value.
+     * Default value is [Default.DEFAULT_DEFAULT_VALUE_SEPARATOR]
+
+     * @return the default value separator
+     */
+    var defaultValueSeparator = Default.DEFAULT_DEFAULT_VALUE_SEPARATOR
+        private set
+
     private var ignoreUnresolvablePlaceholders = false
 
     /*
@@ -92,7 +101,7 @@ class ProperltyBuilder internal constructor() {
      * @return
      */
     fun build(): Properlty {
-        return Properlty(ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, ignoreUnresolvablePlaceholders).read())
+        return Properlty(ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders).read())
     }
 
     /**

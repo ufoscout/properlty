@@ -15,19 +15,17 @@
  ******************************************************************************/
 package com.ufoscout.properlty;
 
-import com.ufoscout.properlty.reader.EnvironmentVariablesReader;
 import com.ufoscout.properlty.reader.PropertiesResourceReader;
 import com.ufoscout.properlty.reader.Reader;
-import com.ufoscout.properlty.reader.SystemPropertiesReader;
 import com.ufoscout.properlty.reader.decorator.PriorityQueueDecoratorReader;
 import com.ufoscout.properlty.reader.decorator.ReplacerDecoratorReader;
-import com.ufoscout.properlty.reader.decorator.ToLowerCaseAndDotKeyReader;
 
 public class ProperltyBuilder {
 
 	private final PriorityQueueDecoratorReader reader = new PriorityQueueDecoratorReader();
 	private String startDelimiter = Default.START_DELIMITER;
 	private String endDelimiter = Default.END_DELIMITER;
+	private String defaultValueSeparator = Default.DEFAULT_DEFAULT_VALUE_SEPARATOR;
 	private boolean ignoreUnresolvablePlaceholders = false;
 
 	ProperltyBuilder() {
@@ -103,7 +101,7 @@ public class ProperltyBuilder {
 	 * @return
 	 */
 	public Properlty build() {
-		return new Properlty( new ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, ignoreUnresolvablePlaceholders).read() );
+		return new Properlty( new ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders).read() );
 	}
 
 	/**
@@ -136,6 +134,17 @@ public class ProperltyBuilder {
 	public ProperltyBuilder delimiters(String startDelimiter, String endDelimiter) {
 		this.startDelimiter = startDelimiter;
 		this.endDelimiter = endDelimiter;
+		return this;
+	}
+
+	/**
+	 * Set the default value separator.
+	 * Default is {@value Default#DEFAULT_DEFAULT_VALUE_SEPARATOR}
+	 *
+	 * @param defaultValueSeparator the default value separator
+	 */
+	public ProperltyBuilder defaultValueSeparator(String defaultValueSeparator) {
+		this.defaultValueSeparator = defaultValueSeparator;
 		return this;
 	}
 

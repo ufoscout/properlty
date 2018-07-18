@@ -115,6 +115,37 @@ public class Properlty {
 	 * @param key
 	 * @return
 	 */
+	public Optional<Boolean> getBoolean(String key) {
+		return get(key).map(value -> {
+			if ( "true".equalsIgnoreCase(value) )
+				return true;
+			else if ( "false".equalsIgnoreCase(value) )
+				return false;
+			else
+				throw new RuntimeException("Cannot parse boolean value: [" + value+ "]");
+		});
+	}
+
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public boolean getBoolean(String key, boolean defaultValue) {
+		final Optional<Boolean> optional = getBoolean(key);
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
 	public Optional<Double> getDouble(String key) {
 		return get(key).map(Double::parseDouble);
 	}

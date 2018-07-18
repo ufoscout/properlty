@@ -16,9 +16,9 @@
 package com.ufoscout.properlty
 
 import com.ufoscout.properlty.reader.PropertyValue
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert.*
 import org.junit.Test
+import java.lang.RuntimeException
 import java.util.*
 import java.util.stream.Collectors
 
@@ -109,6 +109,58 @@ class ProperltyTest : ProperltyBaseTest() {
         val prop = buildProperlty(properties)
 
         prop.getInt("key.one")
+
+    }
+
+    @Test
+    fun shouldReturnEmptyOptionalBoolean() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "value.one")
+        properties.put("key.two", "value.two")
+
+        val prop = buildProperlty(properties)
+
+        assertNull(prop.getBoolean("key.three"))
+    }
+
+
+    @Test
+    fun shouldReturnOptionalBoolean() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "true")
+        properties.put("key.two", "false")
+
+        val prop = buildProperlty(properties)
+
+        assertTrue(prop.getBoolean("key.one")!!)
+        assertFalse(prop.getBoolean("key.two")!!)
+    }
+
+    @Test
+    fun shouldReturnDefaultBoolean() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "True")
+
+        val prop = buildProperlty(properties)
+
+        assertTrue(prop.getBoolean("key.one", false))
+        assertFalse(prop.getBoolean("key.two", false))
+        assertTrue(prop.getBoolean("key.two", true))
+
+    }
+
+    @Test(expected = RuntimeException::class)
+    fun shouldThrowExceptionParsingWrongBoolean() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "not a boolean")
+
+        val prop = buildProperlty(properties)
+
+        prop.getDouble("key.one")
 
     }
 

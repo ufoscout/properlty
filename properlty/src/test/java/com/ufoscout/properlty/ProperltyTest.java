@@ -17,6 +17,7 @@ package com.ufoscout.properlty;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +115,58 @@ public class ProperltyTest extends ProperltyBaseTest {
 		final Properlty prop = buildProperlty(properties);
 
 		prop.getInt("key.one");
+
+	}
+
+	@Test
+	public void shouldReturnEmptyOptionalBoolean() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "value.one");
+		properties.put("key.two", "value.two");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertFalse(prop.getBoolean("key.three").isPresent());
+	}
+
+
+	@Test
+	public void shouldReturnOptionalBoolean() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "True");
+		properties.put("key.two", "false");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertTrue(prop.getBoolean("key.one").get());
+		assertFalse(prop.getBoolean("key.two").get());
+	}
+
+	@Test
+	public void shouldReturnDefaultBoolean() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "true");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertTrue(prop.getBoolean("key.one", false));
+		assertFalse(prop.getBoolean("key.two", false));
+		assertTrue(prop.getBoolean("key.two", true));
+
+	}
+
+	@Test(expected=RuntimeException.class)
+	public void shouldThrowExceptionParsingWrongBoolean() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "not a bool");
+
+		final Properlty prop = buildProperlty(properties);
+
+		prop.getBoolean("key.one");
 
 	}
 

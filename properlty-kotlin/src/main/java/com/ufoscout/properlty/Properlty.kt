@@ -86,6 +86,37 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * *
      * @return
      */
+    fun getBoolean(key: String): Boolean? {
+        val value = get(key)
+        return if (value == null)
+            value
+        else if ("true".equals(value, ignoreCase = true))
+            true
+        else if ("false".equals(value, ignoreCase = true))
+            false
+        else
+            throw RuntimeException("Cannot parse boolean value: [$value]")
+    }
+
+    /**
+     * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+     * @param key
+     * *
+     * @param defaultValue
+     * *
+     * @return
+     */
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return getBoolean(key) ?: defaultValue
+    }
+
+    /**
+     * Return the property value associated with the given key.
+
+     * @param key
+     * *
+     * @return
+     */
     fun getInt(key: String): Int? {
         return get(key, {java.lang.Integer.parseInt(it)})
     }

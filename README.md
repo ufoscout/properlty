@@ -55,7 +55,7 @@ Kotlin:
 Java:
 ```java
     final Properlty properlty = Properlty.builder()
-            .add("classpath:classpath:config.properties")  // loads from the classpath
+            .add("classpath:config.properties")  // loads from the classpath
             .build();
 ```
 
@@ -202,26 +202,26 @@ A typical real life configuration would look like:
 ```kotlin
     val properlty = Properlty.builder()
     
-             // Load the Environment variables
-            .add(EnvironmentVariablesReader(), priority = Default.HIGHEST_PRIORITY)
-
-             // load the Environment variables and convert their keys 
-             // from JAVA_HOME=XXX to java.home=XXX
-             // This could be desired to override default properties
-            .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()), priority = Default.HIGHEST_PRIORITY)
-            
-             // Load the Java system properties. They overrides the Environment variables.
-            .add(SystemPropertiesReader(), priority = Default.HIGHEST_PRIORITY)
-            
             // load a resource from the classpath
             .add("classpath:default.properties")
             
-             // load a file the file system
+             // load a file from the file system
             .add("file:./config/config.properties")
             
             // Add a not mandatory reader, resource not found exceptions are ignored.
             // Here I am adding properties present only during testing.
             .add(resourcePath = "classpath:test.properties", ignoreNotFound = true)
+
+             // Load the Environment variables
+            .add(EnvironmentVariablesReader())
+
+             // load the Environment variables and convert their keys 
+             // from JAVA_HOME=XXX to java.home=XXX
+             // This could be desired to override default properties
+            .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+            
+             // Load the Java system properties. They override the Environment variables.
+            .add(SystemPropertiesReader())
             
             // build the properlty object 
             .build()

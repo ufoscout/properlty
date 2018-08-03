@@ -20,7 +20,7 @@ For Kotlin:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty-kotlin</artifactId>
-        <version>1.7.0</version>
+        <version>1.8.1</version>
     </dependency>
 ```
 
@@ -29,7 +29,7 @@ For Java:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty</artifactId>
-        <version>1.7.0</version>
+        <version>1.8.1</version>
     </dependency>
 ```
 

@@ -28,6 +28,7 @@ import com.ufoscout.properlty.reader.Reader;
  * @author Francesco Cina
  *
  */
+@Deprecated
 public class ToLowerCaseAndDotKeyReader extends DecoratorReader {
 
 	public ToLowerCaseAndDotKeyReader(Reader reader) {

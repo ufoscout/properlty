@@ -27,6 +27,7 @@ public class ProperltyBuilder {
 	private String endDelimiter = Default.END_DELIMITER;
 	private String defaultValueSeparator = Default.DEFAULT_DEFAULT_VALUE_SEPARATOR;
 	private boolean ignoreUnresolvablePlaceholders = false;
+	private boolean caseSensitive = true;
 
 	ProperltyBuilder() {
 		/*
@@ -101,7 +102,7 @@ public class ProperltyBuilder {
 	 * @return
 	 */
 	public Properlty build() {
-		return new Properlty( new ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders).read() );
+		return new Properlty( caseSensitive, new ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders, caseSensitive).read() );
 	}
 
 	/**
@@ -157,6 +158,18 @@ public class ProperltyBuilder {
 	 */
 	public ProperltyBuilder ignoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {
 		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
+		return this;
+	}
+
+	/**
+	 * Whether the key are case sensitive.
+	 * Default is true.
+	 *
+	 * @param caseSensitive
+	 * @return
+	 */
+	public ProperltyBuilder caseSensitive(boolean caseSensitive) {
+		this.caseSensitive = caseSensitive;
 		return this;
 	}
 

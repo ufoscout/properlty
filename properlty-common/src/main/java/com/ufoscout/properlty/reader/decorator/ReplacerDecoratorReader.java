@@ -39,18 +39,28 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 	private final String endDelimiter;
 	private final String defaultValueSeparator;
 	private final boolean ignoreUnresolvablePlaceholders;
+	private final boolean caseSensitiveKeys;
 
-	public ReplacerDecoratorReader(Reader reader, String startDelimiter, String endDelimiter, String defaultValueSeparator, boolean ignoreUnresolvablePlaceholders) {
+	public ReplacerDecoratorReader(Reader reader,
+								   String startDelimiter,
+								   String endDelimiter,
+								   String defaultValueSeparator,
+								   boolean ignoreUnresolvablePlaceholders,
+								   boolean caseSensitive) {
 		super(reader);
 		this.startDelimiter = startDelimiter;
 		this.endDelimiter = endDelimiter;
 		this.defaultValueSeparator = defaultValueSeparator;
 		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders;
+		this.caseSensitiveKeys = caseSensitive;
 	}
 
 	@Override
 	protected Map<String, PropertyValue> apply(Map<String, PropertyValue> input) {
-		final Map<String, PropertyValue> output = new LinkedHashMap<>(input);
+		final Map<String, PropertyValue> output = new LinkedHashMap<>();
+		input.forEach((key, value) -> {
+			output.put(getKey(key), value);
+		});
 
 		final Map<String, PropertyValue> valuesToBeReplacedMap = new LinkedHashMap<>();
 		boolean valuesToBeReplaced = true;
@@ -116,9 +126,9 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 	private String getBaseValue(String token, String defaultValueSeparator) {
 		int index = token.indexOf(defaultValueSeparator);
 		if (index >= 0) {
-			return token.substring(0, index);
+			token = token.substring(0, index);
 		}
-		return token;
+		return getKey(token);
 	}
 
 	private String getDefaultValue(String token, String defaultValueSeparator) {
@@ -127,6 +137,14 @@ public class ReplacerDecoratorReader extends DecoratorReader {
 			return token.substring(index+1);
 		}
 		return "";
+	}
+
+	private String getKey(String key)  {
+		if (caseSensitiveKeys) {
+			return key;
+		} else {
+			return key.toLowerCase();
+		}
 	}
 
 }

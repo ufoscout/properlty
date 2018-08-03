@@ -15,18 +15,20 @@
  ******************************************************************************/
 package com.ufoscout.properlty;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.ufoscout.properlty.reader.ProgrammaticPropertiesReader;
+import com.ufoscout.properlty.reader.Properties;
+import com.ufoscout.properlty.reader.Reader;
+import com.ufoscout.properlty.reader.decorator.ReplacerDecoratorReader;
 import org.junit.Test;
 
 import com.ufoscout.properlty.reader.PropertyValue;
+
+import static org.junit.Assert.*;
 
 public class ProperltyTest extends ProperltyBaseTest {
 
@@ -53,6 +55,23 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		assertEquals("value.one", prop.get("key.one").get());
 		assertEquals("value.two", prop.get("key.two").get());
+		assertFalse(prop.get("key.ONE").isPresent());
+	}
+
+	@Test
+	public void shouldReturnCaseInsensitive() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "value.one");
+		properties.put("KEy.tWo", "value.two");
+
+		final boolean caseSensitive = false;
+		final Properlty prop = buildProperlty(properties, caseSensitive);
+
+		assertEquals("value.one", prop.get("key.one").get());
+		assertEquals("value.two", prop.get("key.two").get());
+		assertEquals("value.one", prop.get("key.ONE").get());
+		assertEquals("value.two", prop.get("KEY.TWo").get());
 	}
 
 	@Test
@@ -248,7 +267,7 @@ public class ProperltyTest extends ProperltyBaseTest {
 	}
 
 	@Test
-	public void shouldReturnDefaultfloat() {
+	public void shouldReturnDefaultFloat() {
 		final Map<String, String> properties = new HashMap<>();
 
 		properties.put("key.one", "1");
@@ -435,12 +454,48 @@ public class ProperltyTest extends ProperltyBaseTest {
 		assertEquals(0, prop.getList("key.three", Integer::valueOf).size());
 	}
 
+	@Test
+	public void shouldMatchPlaceholdersNotSensitiveCase() {
+		final Map<String, String> properties = new HashMap<>();
+		properties.put("key.ONE", "${value1:defaultValue1}");
+		properties.put("keY.TWO", "${KEY.one:defaultValue2}");
+		properties.put("key.three", "${KEY.one:defaultValue3}");
+
+		final boolean caseSensitive = false;
+		final Properlty prop = buildProperlty(properties, caseSensitive);
+
+		assertEquals("defaultValue1", prop.get("key.one").get());
+		assertEquals("defaultValue1", prop.get("key.two").get());
+		assertEquals("defaultValue1", prop.get("key.THREE").get());
+
+	}
+
+	@Test
+	public void shouldMatchPlaceholdersSensitiveCase() {
+		final Map<String, String> properties = new HashMap<>();
+		properties.put("key.ONE", "${value1:defaultValue1}");
+		properties.put("keY.TWO", "${KEY.one:defaultValue2}");
+		properties.put("key.three", "${KEY.one:defaultValue3}");
+
+		final boolean caseSensitive = true;
+		final Properlty prop = buildProperlty(properties, caseSensitive);
+
+		assertEquals("defaultValue1", prop.get("key.ONE").get());
+		assertEquals("defaultValue2", prop.get("keY.TWO").get());
+		assertEquals("defaultValue3", prop.get("key.three").get());
+
+	}
+
 	private Properlty buildProperlty(Map<String, String> properties) {
-		return new Properlty(properties.entrySet().stream()
-		        .collect(Collectors.toMap(
-		                e -> e.getKey(),
-		                e -> PropertyValue.of(e.getValue())
-		            )));
+		return buildProperlty(properties, true);
+	}
+
+	private Properlty buildProperlty(Map<String, String> properties, boolean caseSensitive) {
+		ProperltyBuilder builder = Properlty.builder();
+		properties.forEach((key, value) -> {
+			builder.add(Properties.add(key, value));
+		});
+		return builder.caseSensitive(caseSensitive).build();
 	}
 
 }

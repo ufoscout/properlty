@@ -16,6 +16,8 @@
 package com.ufoscout.properlty.reader;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -26,13 +28,44 @@ import java.util.stream.Collectors;
  */
 public class EnvironmentVariablesReader implements Reader {
 
+	private final Map<String, String> replaceMap = new ConcurrentHashMap<>();
+	private final Supplier<Map<String, String>> envSupplier;
+
+	public EnvironmentVariablesReader() {
+		this(() -> System.getenv());
+	}
+
+	EnvironmentVariablesReader(Supplier<Map<String, String>> envSupplier) {
+		this.envSupplier = envSupplier;
+	}
+
 	@Override
 	public Map<String, PropertyValue> read() {
-		return System.getenv().entrySet().stream()
+		return envSupplier.get().entrySet().stream()
 		        .collect(Collectors.toMap(
-		                e -> e.getKey(),
+		                e -> getKey(e.getKey()),
 		                e -> PropertyValue.of(e.getValue()).resolvable(false)
 		            ));
 	}
+
+	/**
+	 * Replace characters from the key.
+	 *
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public EnvironmentVariablesReader replace(String from, String to) {
+		replaceMap.put(from, to);
+		return this;
+	}
+
+	private String getKey(String key) {
+		for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
+			key = key.replace(entry.getKey(), entry.getValue());
+		}
+		return key;
+	}
+
 
 }

@@ -19,7 +19,7 @@ import com.ufoscout.properlty.reader.PropertyValue
 import java.util.*
 import java.util.stream.Collectors
 
-class Properlty internal constructor(private val properties: Map<String, PropertyValue>) {
+class Properlty internal constructor(private val caseSensitive: Boolean, private val properties: Map<String, PropertyValue>) {
 
     /**
      * Return the property value associated with the given key.
@@ -29,7 +29,12 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     operator fun get(key: String): String? {
-        return properties[key]?.value
+        var key_ = if (caseSensitive) {
+            key
+        } else {
+            key.toLowerCase()
+        }
+        return properties[key_]?.value
     }
 
     /**
@@ -55,7 +60,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     operator fun <T> get(key: String, map: (String) -> T): T? {
-        val value = properties[key]?.value
+        val value = get(key)
         if (value!=null) {
             return map(value)
         }
@@ -235,7 +240,7 @@ class Properlty internal constructor(private val properties: Map<String, Propert
      * @return
      */
     fun getArray(key: String, separator: String = Default.LIST_SEPARATOR): Array<String> {
-        val value = properties[key]?.value
+        val value = get(key)
         if (value!=null) {
             return value.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         }

@@ -15,6 +15,7 @@
  */
 package com.ufoscout.properlty
 
+import com.ufoscout.properlty.reader.Properties
 import com.ufoscout.properlty.reader.PropertyValue
 import org.junit.Assert.*
 import org.junit.Test
@@ -47,6 +48,23 @@ class ProperltyTest : ProperltyBaseTest() {
 
         assertEquals("value.one", prop.get("key.one"))
         assertEquals("value.two", prop["key.two"])
+        assertNull(prop["key.ONE"])
+    }
+
+    @Test
+    fun shouldReturnCaseInsensitive() {
+        val properties = HashMap<String, String>()
+
+        properties["key.one"] = "value.one"
+        properties["KEy.tWo"] = "value.two"
+
+        val caseSensitive = false
+        val prop = buildProperlty(properties, caseSensitive)
+
+        assertEquals("value.one", prop["key.one"])
+        assertEquals("value.two", prop["key.two"])
+        assertEquals("value.one", prop["key.ONE"])
+        assertEquals("value.two", prop["KEY.TWo"])
     }
 
     @Test
@@ -242,7 +260,7 @@ class ProperltyTest : ProperltyBaseTest() {
     }
 
     @Test
-    fun shouldReturnDefaultfloat() {
+    fun shouldReturnDefaultFloat() {
         val properties = HashMap<String, String>()
 
         properties.put("key.one", "1")
@@ -429,9 +447,42 @@ class ProperltyTest : ProperltyBaseTest() {
         assertEquals(0, prop.getList<Int>("key.three", { Integer.valueOf(it) }).size)
     }
 
-    private fun buildProperlty(properties: Map<String, String>): Properlty {
-        return Properlty(properties.entries.stream()
-                .collect(Collectors.toMap({ it.key }, { PropertyValue.of(it.value) })))
+    @Test
+    fun shouldMatchPlaceholdersNotSensitiveCase() {
+        val properties = HashMap<String, String>()
+        properties["key.ONE"] = "\${value1:defaultValue1}"
+        properties["keY.TWO"] = "\${KEY.one:defaultValue2}"
+        properties["key.three"] = "\${KEY.one:defaultValue3}"
+
+        val caseSensitive = false
+        val prop = buildProperlty(properties, caseSensitive)
+
+        assertEquals("defaultValue1", prop["key.one"])
+        assertEquals("defaultValue1", prop["key.two"])
+        assertEquals("defaultValue1", prop["key.THREE"])
+
+    }
+
+    @Test
+    fun shouldMatchPlaceholdersSensitiveCase() {
+        val properties = HashMap<String, String>()
+        properties["key.ONE"] = "\${value1:defaultValue1}"
+        properties["keY.TWO"] = "\${KEY.one:defaultValue2}"
+        properties["key.three"] = "\${KEY.one:defaultValue3}"
+
+        val caseSensitive = true
+        val prop = buildProperlty(properties, caseSensitive)
+
+        assertEquals("defaultValue1", prop["key.ONE"])
+        assertEquals("defaultValue2", prop["keY.TWO"])
+        assertEquals("defaultValue3", prop["key.three"])
+
+    }
+
+    private fun buildProperlty(properties: Map<String, String>, caseSensitive: Boolean = true): Properlty {
+        val builder = Properlty.builder().caseSensitive(caseSensitive)
+        properties.forEach { key, value -> builder.add(Properties.add(key, value)) }
+        return builder.build()
     }
 
 }

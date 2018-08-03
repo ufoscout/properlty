@@ -53,6 +53,8 @@ class ProperltyBuilder internal constructor() {
 
     private var ignoreUnresolvablePlaceholders = false
 
+    private var caseSensitive = true
+
     /*
     init {
         reader.add(EnvironmentVariablesReader(), environmentVariablesPriority)
@@ -101,7 +103,7 @@ class ProperltyBuilder internal constructor() {
      * @return
      */
     fun build(): Properlty {
-        return Properlty(ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders).read())
+        return Properlty(caseSensitive, ReplacerDecoratorReader(reader, startDelimiter, endDelimiter, defaultValueSeparator, ignoreUnresolvablePlaceholders, caseSensitive).read())
     }
 
     /**
@@ -127,6 +129,18 @@ class ProperltyBuilder internal constructor() {
      */
     fun ignoreUnresolvablePlaceholders(ignoreUnresolvablePlaceholders: Boolean): ProperltyBuilder {
         this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders
+        return this
+    }
+
+    /**
+     * Whether the key are case sensitive.
+     * Default is true.
+     *
+     * @param caseSensitive
+     * @return
+     */
+    fun caseSensitive(caseSensitive: Boolean): ProperltyBuilder {
+        this.caseSensitive = caseSensitive
         return this
     }
 

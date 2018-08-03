@@ -145,6 +145,29 @@ server.url=${server.ip}/${server.port}
 The default separator for the default value is ":". A custom value can be set through the 'defaultValueSeparator()' method of Properlty.builder().
 
 
+Case Sensitive settings
+-----------------------
+By default keys and placeholders are case sensitive.
+The default behavior can be modified with the caseSensitive() builder method:
+
+```properties
+    server.PORT=9090
+    server.host=127.0.0.1
+    server.url=http://${SerVeR.host}:${SERVER.port}/
+```
+
+Kotlin:
+```kotlin
+    val properlty = Properlty.builder()
+            .caseSensitive(false)
+            .add("classpath:config.properties") // loads from the classpath
+            .build()
+    val serverUrl = properlty["server.url"] // returns http://127.0.0.1:9090/
+```
+
+Case insensitive can simplify key overriding through environment variables.
+
+
 Readers priority -> Last one wins
 ---------------------------------
 Properties defined in later readers will override properties defined earlier readers, in case of overlapping keys. 
@@ -201,7 +224,10 @@ A typical real life configuration would look like:
 
 ```kotlin
     val properlty = Properlty.builder()
-    
+
+            // case insensitive behavior simplifies matching of environment variables, especially in Linux systems
+            .caseSensitive(false)
+
             // load a resource from the classpath
             .add("classpath:default.properties")
             
@@ -212,13 +238,10 @@ A typical real life configuration would look like:
             // Here I am adding properties present only during testing.
             .add(resourcePath = "classpath:test.properties", ignoreNotFound = true)
 
-             // Load the Environment variables
-            .add(EnvironmentVariablesReader())
-
-             // load the Environment variables and convert their keys 
-             // from JAVA_HOME=XXX to java.home=XXX
+             // load the Environment variables and convert their keys
+             // from JAVA_HOME=XXX to JAVA.HOME=XXX
              // This could be desired to override default properties
-            .add(ToLowerCaseAndDotKeyReader(EnvironmentVariablesReader()))
+            .add(EnvironmentVariablesReader().replace("_", "."))
             
              // Load the Java system properties. They override the Environment variables.
             .add(SystemPropertiesReader())

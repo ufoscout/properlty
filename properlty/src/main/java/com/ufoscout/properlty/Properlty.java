@@ -27,13 +27,15 @@ import com.ufoscout.properlty.reader.PropertyValue;
 public class Properlty {
 
 	private final Map<String, PropertyValue> properties;
+	private final boolean caseSensitive;
 
 	public static ProperltyBuilder builder() {
 		return new ProperltyBuilder();
 	}
 
-	Properlty(Map<String, PropertyValue> properties) {
+	Properlty(boolean caseSensitive, Map<String, PropertyValue> properties) {
 		this.properties = properties;
+		this.caseSensitive = caseSensitive;
 	}
 
 	/**
@@ -43,6 +45,9 @@ public class Properlty {
 	 * @return
 	 */
 	public Optional<String> get(String key) {
+		if (!caseSensitive) {
+			key = key.toLowerCase();
+		}
 		final PropertyValue value = properties.get(key);
 		if (value != null) {
 			return Optional.ofNullable(value.getValue());

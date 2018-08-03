@@ -19,9 +19,10 @@ import com.ufoscout.properlty.ProperltyBaseTest;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class EnvironmentVariablesReaderTest extends ProperltyBaseTest {
 
@@ -34,6 +35,26 @@ public class EnvironmentVariablesReaderTest extends ProperltyBaseTest {
 		var.forEach((key, value) -> {
 			assertFalse(value.isResolvable());
 		});
+	}
+
+	@Test
+	public void shouldReplaceInEnvironmentVariableKeys() {
+		Supplier<Map<String, String>> envSupplier = () -> {
+			Map<String, String> envs = new ConcurrentHashMap<>();
+			envs.put("ENV_ONE_KEY_ONE", "ENV_ONE_VALUE_ONE");
+			return envs;
+		};
+		final Map<String, PropertyValue> var = new EnvironmentVariablesReader(envSupplier)
+				.replace("_", ".")
+				.read();
+
+		assertNotNull(var);
+		assertFalse(var.isEmpty());
+
+		assertFalse(var.containsKey("ENV_ONE_KEY_ONE"));
+		assertTrue(var.containsKey("ENV.ONE.KEY.ONE"));
+		assertEquals("ENV_ONE_VALUE_ONE", var.get("ENV.ONE.KEY.ONE").getValue());
+
 	}
 
 }

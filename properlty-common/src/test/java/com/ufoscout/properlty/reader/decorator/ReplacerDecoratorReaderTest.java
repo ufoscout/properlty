@@ -36,7 +36,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.two", "value.two");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(2, output.size());
@@ -53,7 +54,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.two", PropertyValue.of("value.two"));
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(3, output.size());
@@ -72,8 +74,9 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.4", "${key.3}");
 
 		final boolean ignoreNotResolvable = false;
+		final boolean caseSensitive = true;
 		try {
-			new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+			new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 			fail();
 		} catch (final UnresolvablePlaceholdersException e) {
 			final String message = e.getMessage();
@@ -89,7 +92,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		final ProgrammaticPropertiesReader properties = Properties.add("key.one", "${key.one}");
 
 		final boolean ignoreNotResolvable = true;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(1, output.size());
@@ -104,7 +108,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.two", "${key.one}");
 
 		final boolean ignoreNotResolvable = true;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(2, output.size());
@@ -122,7 +127,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.4", "${key.2}");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(4, output.size());
@@ -142,7 +148,8 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		properties.add("key.4", "Hello world!");
 
 		final boolean ignoreNotResolvable = false;
-		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+		final boolean caseSensitive = true;
+		final Map<String, PropertyValue> output = new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 		assertNotNull(output);
 
 		assertEquals(4, output.size());
@@ -161,8 +168,9 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 				.add("key.two", "${value2:defaultValue2}");
 
 		boolean ignoreNotResolvable = true;
+		final boolean caseSensitive = true;
 		final Map<String, PropertyValue> output =
-				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 
 		assertNotNull(output);
 
@@ -180,8 +188,9 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		.add("key.two", "${key.one}");
 
 		boolean ignoreNotResolvable = true;
+		final boolean caseSensitive = true;
 		final Map<String, PropertyValue> output =
-				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 
 		assertNotNull(output);
 
@@ -199,8 +208,9 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		.add("key.two", "${key.one:defaultValue2}");
 
 		boolean ignoreNotResolvable = true;
+		final boolean caseSensitive = true;
 		final Map<String, PropertyValue> output =
-				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 
 		assertNotNull(output);
 
@@ -219,8 +229,9 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		.add("key.three", "value");
 
 		boolean ignoreNotResolvable = true;
+		final boolean caseSensitive = true;
 		final Map<String, PropertyValue> output =
-				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable).read();
+				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
 
 		assertNotNull(output);
 
@@ -229,6 +240,27 @@ public class ReplacerDecoratorReaderTest extends ProperltyBaseTest {
 		assertEquals("value", output.get("key.one").getValue());
 		assertEquals("value", output.get("key.two").getValue());
 		assertEquals("value", output.get("key.three").getValue());
+
+	}
+
+
+	@Test
+	public void shouldMatchPlaceholdersNotSensitiveCase() {
+		final ProgrammaticPropertiesReader properties = Properties
+				.add("key.ONE", "${value1:defaultValue1}")
+				.add("keY.TWO", "${KEY.one:defaultValue2}");
+
+		boolean ignoreNotResolvable = true;
+		final boolean caseSensitive = false;
+		final Map<String, PropertyValue> output =
+				new ReplacerDecoratorReader(properties, "${", "}", ":", ignoreNotResolvable, caseSensitive).read();
+
+		assertNotNull(output);
+
+		assertEquals(2, output.size());
+
+		assertEquals("defaultValue1", output.get("key.one").getValue());
+		assertEquals("defaultValue1", output.get("key.two").getValue());
 
 	}
 

@@ -35,7 +35,7 @@ public class PriorityQueueDecoratorReader implements Reader {
 
 	@Override
 	public Map<String, PropertyValue> read() {
-		final Map<String, PropertyValue> result =  new HashMap<>();
+		final Map<String, PropertyValue> result =  new LinkedHashMap<>();
 		readersMap.forEach((priority, readers) -> {
 			readers.forEach(reader -> {
 				final Map<String, PropertyValue> entries = reader.read();

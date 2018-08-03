@@ -35,7 +35,7 @@ public class EnvironmentVariablesReader implements Reader {
 		this(() -> System.getenv());
 	}
 
-	EnvironmentVariablesReader(Supplier<Map<String, String>> envSupplier) {
+	public EnvironmentVariablesReader(Supplier<Map<String, String>> envSupplier) {
 		this.envSupplier = envSupplier;
 	}
 

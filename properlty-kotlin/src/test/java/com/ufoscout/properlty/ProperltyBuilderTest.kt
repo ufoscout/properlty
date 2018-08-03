@@ -232,6 +232,41 @@ class ProperltyBuilderTest : ProperltyBaseTest() {
                 .build()
     }
 
+    @Test
+    fun shouldCorrectlyOverrideInCaseInsensitive() {
+
+        val prop = Properlty
+                .builder()
+                .caseSensitive(false)
+                .add("file:./src/test/files/test1.properties")
+                .add(Properties.add("key.two", "\${KEY.one:defaultValue2}"))
+                .add(EnvironmentVariablesReader{
+                    mapOf("KEY_ONE" to "valueFromEnv")
+                }.replace("_", "."))
+                .build()
+
+        assertEquals("valueFromEnv", prop["key.ONE"])
+        assertEquals("valueFromEnv", prop["key.two"])
+
+    }
+
+    @Test
+    fun shouldCorrectlyOverrideOnlyCaseSensitive() {
+
+        val prop = Properlty
+                .builder()
+                .caseSensitive(true)
+                .add("file:./src/test/files/test1.properties")
+                .add(Properties.add("key.two", "\${KEY.ONE:defaultValue2}"))
+                .add(EnvironmentVariablesReader{
+                    mapOf("KEY_ONE" to "valueFromEnv")
+                }.replace("_", "."))
+                .build()
+
+        assertEquals("valueFromFileTest1", prop["key.one"])
+        assertEquals("valueFromEnv", prop["key.two"])
+
+    }
 
     private fun getKeysWithUppercase(map: Map<String, *>, howMany: Int): Array<String> {
         val keys = Array (howMany, { i -> "" })

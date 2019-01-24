@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.ufoscout.properlty;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -327,6 +329,58 @@ public class ProperltyTest extends ProperltyBaseTest {
 
 		assertEquals(1l, prop.getLong("key.one", 10l));
 		assertEquals(10l, prop.getLong("key.two", 10l));
+
+	}
+
+	@Test
+	public void shouldReturnOptionalBigDecimal() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "123");
+		properties.put("key.two", "1000000");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertEquals(123, prop.getBigDecimal("key.one").get().intValue());
+		assertEquals(1000000, prop.getBigDecimal("key.two").get().intValue());
+	}
+
+	@Test
+	public void shouldReturnDefaultBigDecimal() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "1");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertEquals(1, prop.getBigDecimal("key.one", new BigDecimal(10)).intValue());
+		assertEquals(10, prop.getBigDecimal("key.two", new BigDecimal(10)).intValue());
+
+	}
+
+	@Test
+	public void shouldReturnOptionalBigInteger() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "123");
+		properties.put("key.two", "1000000");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertEquals(123, prop.getBigInteger("key.one").get().intValue());
+		assertEquals(1000000, prop.getBigInteger("key.two").get().intValue());
+	}
+
+	@Test
+	public void shouldReturnDefaultBigInteger() {
+		final Map<String, String> properties = new HashMap<>();
+
+		properties.put("key.one", "1");
+
+		final Properlty prop = buildProperlty(properties);
+
+		assertEquals(1, prop.getBigInteger("key.one", new BigInteger("10")).intValue());
+		assertEquals(10, prop.getBigInteger("key.two", new BigInteger("10")).intValue());
 
 	}
 

@@ -20,6 +20,8 @@ import com.ufoscout.properlty.reader.PropertyValue
 import org.junit.Assert.*
 import org.junit.Test
 import java.lang.RuntimeException
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
 import java.util.stream.Collectors
 
@@ -320,6 +322,58 @@ class ProperltyTest : ProperltyBaseTest() {
 
         assertEquals(1L, prop.getLong("key.one", 10L))
         assertEquals(10L, prop.getLong("key.two", 10L))
+
+    }
+
+    @Test
+    fun shouldReturnOptionalBigDecimal() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "123")
+        properties.put("key.two", "1000000")
+
+        val prop = buildProperlty(properties)
+
+        assertEquals(123L, prop.getBigDecimal("key.one")?.toLong())
+        assertEquals(1000000L, prop.getBigDecimal("key.two")?.toLong())
+    }
+
+    @Test
+    fun shouldReturnDefaultBigDecimal() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "1")
+
+        val prop = buildProperlty(properties)
+
+        assertEquals(1L, prop.getBigDecimal("key.one", BigDecimal("10")).toLong())
+        assertEquals(10L, prop.getBigDecimal("key.two", BigDecimal(10L)).toLong())
+
+    }
+
+    @Test
+    fun shouldReturnOptionalBigInteger() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "123")
+        properties.put("key.two", "1000000")
+
+        val prop = buildProperlty(properties)
+
+        assertEquals(123L, prop.getBigInteger("key.one")?.toLong())
+        assertEquals(1000000L, prop.getBigInteger("key.two")?.toLong())
+    }
+
+    @Test
+    fun shouldReturnDefaultBigInteger() {
+        val properties = HashMap<String, String>()
+
+        properties.put("key.one", "1")
+
+        val prop = buildProperlty(properties)
+
+        assertEquals(1L, prop.getBigInteger("key.one", BigInteger.valueOf(10L)).toLong())
+        assertEquals(10L, prop.getBigInteger("key.two", BigInteger.valueOf(10L)).toLong())
 
     }
 

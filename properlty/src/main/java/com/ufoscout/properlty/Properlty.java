@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.ufoscout.properlty;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +213,54 @@ public class Properlty {
 	 */
 	public long getLong(String key, long defaultValue) {
 		final Optional<Long> optional = getLong(key);
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
+	public Optional<BigDecimal> getBigDecimal(String key) {
+		return get(key).map((val) -> new BigDecimal(val));
+	}
+
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public BigDecimal getBigDecimal(String key, BigDecimal defaultValue) {
+		final Optional<BigDecimal> optional = getBigDecimal(key);
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * Return the property value associated with the given key.
+	 *
+	 * @param key
+	 * @return
+	 */
+	public Optional<BigInteger> getBigInteger(String key) {
+		return get(key).map((val) -> new BigInteger(val));
+	}
+
+	/**
+	 * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public BigInteger getBigInteger(String key, BigInteger defaultValue) {
+		final Optional<BigInteger> optional = getBigInteger(key);
 		if (optional.isPresent()) {
 			return optional.get();
 		}

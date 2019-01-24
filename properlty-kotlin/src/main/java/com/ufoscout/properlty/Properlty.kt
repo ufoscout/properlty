@@ -16,6 +16,8 @@
 package com.ufoscout.properlty
 
 import com.ufoscout.properlty.reader.PropertyValue
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
 import java.util.stream.Collectors
 
@@ -205,6 +207,52 @@ class Properlty internal constructor(private val caseSensitive: Boolean, private
      */
     fun getLong(key: String, defaultValue: Long): Long {
         return getLong(key) ?: defaultValue
+    }
+
+    /**
+     * Return the property value associated with the given key.
+
+     * @param key
+     * *
+     * @return
+     */
+    fun getBigDecimal(key: String): BigDecimal? {
+        return get(key, {BigDecimal(it)})
+    }
+
+    /**
+     * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+     * @param key
+     * *
+     * @param defaultValue
+     * *
+     * @return
+     */
+    fun getBigDecimal(key: String, defaultValue: BigDecimal): BigDecimal {
+        return getBigDecimal(key) ?: defaultValue
+    }
+
+    /**
+     * Return the property value associated with the given key.
+
+     * @param key
+     * *
+     * @return
+     */
+    fun getBigInteger(key: String): BigInteger? {
+        return get(key, {BigInteger(it)})
+    }
+
+    /**
+     * Return the property value associated with the given key or the defaultValue if the key cannot be resolved.
+     * @param key
+     * *
+     * @param defaultValue
+     * *
+     * @return
+     */
+    fun getBigInteger(key: String, defaultValue: BigInteger): BigInteger {
+        return getBigInteger(key) ?: defaultValue
     }
 
     /**

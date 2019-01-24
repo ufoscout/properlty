@@ -29,7 +29,7 @@ For Java:
     <dependency>
         <groupId>com.ufoscout.properlty</groupId>
         <artifactId>properlty</artifactId>
-        <version>1.8.1</version>
+        <version>1.9.0</version>
     </dependency>
 ```
 
@@ -270,8 +270,17 @@ Some examples:
     // get an Enum
     val anEnum = properlty.getEnum<NeedSomebodyToLoveEnum>("key")
 
-    // get a BigDecimal by applying a transformation function to the returned String value
-    val aBigDecimal = properlty["key", { BigDecimal(it) }]
+    // get a Long
+    val aLong = properlty.getLong("key")
+
+    // get a Long or default value
+    val anotherLong = properlty.getLong("key", 10L)
+    
+    // get a BigDecimal
+    val aBigDecimal = properlty.getBigDecimal("key")
+    
+    // or get a BigDecimal by applying a transformation function to the returned String value
+    val anotherBigDecimal = properlty["key", { BigDecimal(it) }]
 
     // get a list of BigDecimal. The property value is split in tokens using the default list 
     // separator (a comma) then the transformation function is applied to each token
